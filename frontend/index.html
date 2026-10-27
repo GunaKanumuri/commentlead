@@ -22,8 +22,10 @@
       <h1 id="hero-title">Find people asking<br><em>for what you’re building.</em></h1>
       <p class="hero-sub">Building an app, launching a startup, or selling something you make? Your future customers might already be asking questions. Explore real YouTube comments—no account needed.</p>
       <form id="preview-form" class="preview-form">
-        <label for="landing-query" class="field-label">Explore a video, channel or topic</label>
-        <div class="search-row"><span class="youtube-mark" aria-hidden="true">▶</span><input id="landing-query" name="query" required maxlength="500" placeholder="Paste a YouTube link or enter a topic"><button class="btn-brown" id="preview-submit" type="submit">Preview comments <span aria-hidden="true">→</span></button></div>
+        <fieldset class="search-options"><legend>How would you like to find comments?</legend><label><input type="radio" name="search-mode" id="search-topic" value="topic" checked> Search by topic</label><label><input type="radio" name="search-mode" id="search-video" value="video"> I have a YouTube video link</label></fieldset>
+        <label for="landing-query" class="field-label" id="query-label">What problem does your product solve?</label>
+        <div class="search-row"><span class="search-mark" id="query-mark" aria-hidden="true">⌕</span><input id="landing-query" name="query" type="text" required maxlength="500" aria-describedby="query-help" placeholder="e.g. invoicing for freelancers"><button class="btn-brown" id="preview-submit" type="submit">Find comments <span aria-hidden="true">→</span></button></div>
+        <p class="query-help" id="query-help">Enter a topic, not your product website. We’ll find a related YouTube video and preview its comments.</p>
         <label class="consent"><input id="preview-policy" type="checkbox" required><span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and have read the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       </form>
       <p class="hero-meta"><span>✓ No signup</span><span>✓ No credit card</span><span>✓ Real source links</span></p>
@@ -47,7 +49,7 @@
   </section>
 
   <section class="how-it-works" aria-label="How the free preview works">
-    <div><span class="step">01</span><h3>Start with a conversation</h3><p>Paste a YouTube link or search a topic related to your business.</p></div>
+    <div><span class="step">01</span><h3>Choose a starting point</h3><p>Search a problem your product solves, or choose the video-link option to read comments on a specific YouTube video.</p></div>
     <div><span class="step">02</span><h3>Read the actual comments</h3><p>See a small preview, then open the original source for context.</p></div>
     <div><span class="step">03</span><h3>Use your own judgment</h3><p>Decide whether a helpful, relevant conversation makes sense.</p></div>
   </section>

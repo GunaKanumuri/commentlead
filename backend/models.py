@@ -26,6 +26,7 @@ class EmailAction(BaseModel):
 
 class FreePreview(BaseModel):
     query: str
+    mode: Literal['auto','topic','video']='auto'
 
 class MatchingProfile(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra='forbid')

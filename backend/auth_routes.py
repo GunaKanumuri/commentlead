@@ -258,7 +258,9 @@ def free_preview(b: core.FreePreview, request: core.Request=None):
     q = (b.query or '').strip()
     if not q:
         raise core.HTTPException(400, 'Please enter a YouTube link, channel, or keyword')
-    vids = core.video_ids(q)
+    vids = [] if b.mode=='topic' else core.video_ids(q)
+    if b.mode=='video' and not vids:
+        raise core.HTTPException(400,'Paste a valid YouTube video link, or choose search by topic.')
     if not vids:
         items = core.yt('search', part='snippet', q=q, type='video', maxResults=3).get('items', [])
         vids = [item.get('id', {}).get('videoId') for item in items if item.get('id', {}).get('videoId')]

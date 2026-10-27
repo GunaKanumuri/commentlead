@@ -1221,3 +1221,17 @@ def test_public_local_signup_cannot_claim_an_administrator_address():
         with pytest.raises(HTTPException) as exc:
             app.register(app.Register(email="administrator@pilot.test",password="password123"))
     assert exc.value.status_code==403
+
+def test_preview_topic_mode_never_interprets_topic_as_video_id():
+    with patch.object(app,'video_ids') as ids,patch.object(app,'yt',return_value={'items':[]}) as search:
+        result=app.free_preview(app.FreePreview(query='photography',mode='topic'))
+    ids.assert_not_called()
+    assert search.call_args.kwargs['q']=='photography'
+    assert result['leads']==[]
+
+def test_preview_video_mode_does_not_fall_back_to_keyword_search():
+    with patch.object(app,'video_ids',return_value=[]),patch.object(app,'yt') as search:
+        with pytest.raises(HTTPException) as exc:
+            app.free_preview(app.FreePreview(query='not a video',mode='video'))
+    assert exc.value.status_code==400
+    search.assert_not_called()

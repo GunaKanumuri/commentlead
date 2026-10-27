@@ -7,6 +7,30 @@ const FEATURE_LABELS={
   'automated-search':'Make room for easier discovery.'
 };
 let previewBusy=false,waitlistBusy=false;
+let previewMode='topic';
+const previewInputs={topic:'',video:''};
+function setPreviewMode(mode){
+  if(previewBusy)return;
+  previewInputs[previewMode]=$('#landing-query').value;
+  previewMode=mode==='video'?'video':'topic';
+  const video=previewMode==='video',input=$('#landing-query');
+  input.value=previewInputs[previewMode];input.type=video?'url':'text';
+  input.placeholder=video?'https://www.youtube.com/watch?v=…':'e.g. invoicing for freelancers';
+  $('#query-label').textContent=video?'Which YouTube video should we read?':'What problem does your product solve?';
+  $('#query-help').textContent=video?'Paste a single YouTube video or Shorts link. We’ll preview comments from that video.':'Enter a topic, not your product website. We’ll find a related YouTube video and preview its comments.';
+  $('#query-mark').textContent=video?'▶':'⌕';
+  $('#preview-submit').textContent=video?'Read video comments →':'Find comments →';
+  $('#preview-error').textContent='';input.focus();
+}
+function isYouTubeVideoLink(value){
+  try{
+    const url=new URL(value);
+    if(!['https:','http:'].includes(url.protocol))return false;
+    if(url.hostname==='youtu.be')return /^\/[\w-]{11}\/?$/.test(url.pathname);
+    if(!['youtube.com','www.youtube.com','m.youtube.com'].includes(url.hostname))return false;
+    return (url.pathname==='/watch'&&/^[\w-]{11}$/.test(url.searchParams.get('v')||''))||/^\/(shorts|embed)\/[\w-]{11}\/?$/.test(url.pathname);
+  }catch{return false;}
+}
 function openWaitlist(interest='full-product'){
   $('#waitlist-interest').value=Object.hasOwn(FEATURE_LABELS,interest)?interest:'full-product';
   $('#waitlist-title').textContent=FEATURE_LABELS[$('#waitlist-interest').value];
@@ -50,14 +74,19 @@ function renderPreview(result){
 async function runFreePreview(){
   if(previewBusy)return;
   const query=$('#landing-query').value.trim();if(!query)return;
+  if(previewMode==='video'&&!isYouTubeVideoLink(query)){$('#preview-error').textContent='Paste a YouTube video link, such as https://www.youtube.com/watch?v=VIDEO_ID. Channel and website links are not supported here.';return;}
+  if(previewMode==='topic'&&/^(https?:\/\/|www\.)/i.test(query)){$('#preview-error').textContent='Enter a topic here, such as invoicing for freelancers. To paste a video link, choose “I have a YouTube video link”.';return;}
+  $('#search-topic').disabled=true;$('#search-video').disabled=true;
   previewBusy=true;$('#preview-submit').disabled=true;$('#preview-submit').textContent='Reading comments…';$('#preview-error').textContent='';
   $('#preview-video-card').innerHTML='';$('#preview-leads-list').innerHTML='';$('#preview-results').hidden=true;
-  try{const result=await api('free-preview',{query});renderPreview(result);$('#preview-results').hidden=false;$('#preview-results').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  try{const result=await api('free-preview',{query,mode:previewMode});renderPreview(result);$('#preview-results').hidden=false;$('#preview-results').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
   catch(error){$('#preview-error').textContent=error.message;}
-  finally{previewBusy=false;$('#preview-submit').disabled=false;$('#preview-submit').textContent='Preview comments →';}
+  finally{previewBusy=false;$('#search-topic').disabled=false;$('#search-video').disabled=false;$('#preview-submit').disabled=false;$('#preview-submit').textContent=previewMode==='video'?'Read video comments →':'Find comments →';}
 }
 document.addEventListener('click',event=>{const button=event.target.closest('[data-waitlist]');if(button)openWaitlist(button.dataset.waitlist);});
 $('#preview-form').addEventListener('submit',event=>{event.preventDefault();runFreePreview();});
+$('#search-topic').addEventListener('change',()=>setPreviewMode('topic'));
+$('#search-video').addEventListener('change',()=>setPreviewMode('video'));
 $('#waitlist-form').addEventListener('submit',event=>{event.preventDefault();submitWaitlist();});
 $('#waitlist-close').addEventListener('click',closeWaitlist);
 $('#waitlist-done').addEventListener('click',closeWaitlist);

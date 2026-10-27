@@ -25,3 +25,21 @@ test('comments escaped and links restricted',()=>{
  const {scope,node}=setup();vm.runInContext(`renderPreview({leads:[{text:'<script>bad</script>',link:'javascript:alert(1)'}]})`,scope);
  assert.match(node('#preview-leads-list').innerHTML,/&lt;script&gt;/);assert.doesNotMatch(node('#preview-leads-list').innerHTML,/javascript:/);
 });
+
+test('switching search modes explains each input and preserves the typed topic',()=>{
+ const {scope,node}=setup();node('#landing-query').value='invoicing for freelancers';
+ vm.runInContext("setPreviewMode('video')",scope);
+ assert.equal(node('#landing-query').type,'url');assert.match(node('#query-label').textContent,/YouTube video/);
+ node('#landing-query').value='https://youtu.be/abcdefghijk';
+ vm.runInContext("setPreviewMode('topic')",scope);
+ assert.equal(node('#landing-query').value,'invoicing for freelancers');assert.match(node('#query-help').textContent,/not your product website/);
+});
+test('invalid video links and URLs in topic mode never consume a preview',async()=>{
+ const {scope,node}=setup();let calls=0;scope.fetch=async()=>{calls++;throw Error('Unexpected request');};
+ vm.runInContext("setPreviewMode('video')",scope);node('#landing-query').value='https://example.com/product';
+ await vm.runInContext('runFreePreview()',scope);assert.equal(calls,0);assert.match(node('#preview-error').textContent,/YouTube video link/);
+ vm.runInContext("setPreviewMode('topic')",scope);node('#landing-query').value='https://youtu.be/abcdefghijk';
+ await vm.runInContext('runFreePreview()',scope);assert.equal(calls,0);assert.match(node('#preview-error').textContent,/choose/);
+ assert.equal(vm.runInContext("isYouTubeVideoLink('https://youtu.be/abcdefghijk')",scope),true);
+ assert.equal(vm.runInContext("isYouTubeVideoLink('https://youtube.com/@founder')",scope),false);
+});
