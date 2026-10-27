@@ -66,13 +66,6 @@ async function submitAuthForm(){
     else $('#auth-ok').textContent='Check your email to confirm your account, then log in.';
   }catch(error){showAuthError(error);}
 }
-async function signInWithGoogleSupabase(){
-  try{
-    if(!sbClient)throw new Error('Sign-in is not configured yet.');
-    const {error}=await sbClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
-    if(error)throw error;
-  }catch(error){showAuthError(error);}
-}
 async function sendMagicLinkUI(){
   try{await api('auth/magic-link',{email:$('#auth-email').value.trim()});$('#auth-ok').textContent='If eligible, a login link has been sent. Check your email.';}
   catch(error){showAuthError(error);}
