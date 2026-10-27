@@ -1,0 +1,27 @@
+# Only the runtime sources and dependency manifest belong in a build context.
+**
+!Dockerfile
+!.dockerignore
+!requirements.txt
+!requirements.lock
+!backend/
+!backend/**
+!frontend/
+!frontend/**
+!supabase/
+!supabase/migrations/
+!supabase/migrations/**
+
+# Exclude secrets and local data even if placed under a runtime directory.
+**/.env
+**/.env.*
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.sqlite
+**/*.sqlite3
+**/*.pem
+**/*.key
+**/__pycache__
+**/*.pyc
+frontend/dist

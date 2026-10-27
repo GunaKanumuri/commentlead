@@ -1,0 +1,23 @@
+# Upload only application sources and dependency/configuration files.
+**
+!backend/
+!backend/**
+!frontend/
+!frontend/**
+!supabase/
+!supabase/migrations/
+!supabase/migrations/**
+!requirements.txt
+!requirements.lock
+!pyproject.toml
+!.python-version
+
+# Keep local credentials, data, caches and generated copies out of deployments.
+**/.env
+**/.env.*
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/__pycache__/
+**/*.pyc
+frontend/dist/

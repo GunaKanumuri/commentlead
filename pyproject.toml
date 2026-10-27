@@ -1,0 +1,3 @@
+# Vercel must use the API entry point rather than guessing from test imports.
+[tool.vercel]
+entrypoint = "backend.main:app"

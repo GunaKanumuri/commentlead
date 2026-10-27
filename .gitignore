@@ -1,0 +1,31 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+.mcp.json
+.agents/
+skills-lock.json
+
+# Local SQLite Database & WAL files
+*.db
+*.db-wal
+*.db-shm
+
+# Python caches & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+frontend/dist/
+.test-results/
+legacy-data/
+.local-backups/
+.venv/
+venv/
+env/
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
