@@ -1,4 +1,5 @@
 const FEATURE_LABELS={
+  'instagram-discovery':'Be first to hear about Instagram discovery.',
   'founder-discovery':'Find the people who need what you built.',
   'full-product':'A better way to find your people.',
   'matched-leads':'Find the right fit for your product.',
@@ -14,6 +15,8 @@ function setPreviewMode(mode){
   previewInputs[previewMode]=$('#landing-query').value;
   previewMode=mode==='video'?'video':'topic';
   const video=previewMode==='video',input=$('#landing-query');
+  $('#search-topic').checked=!video;$('#search-video').checked=video;
+  $('#topic-suggestions').hidden=video;
   input.value=previewInputs[previewMode];input.type=video?'url':'text';
   input.placeholder=video?'https://www.youtube.com/watch?v=…':'e.g. invoicing for freelancers';
   $('#query-label').textContent=video?'Which YouTube video should we read?':'What problem does your product solve?';
@@ -21,6 +24,12 @@ function setPreviewMode(mode){
   $('#query-mark').textContent=video?'▶':'⌕';
   $('#preview-submit').textContent=video?'Read video comments →':'Find comments →';
   $('#preview-error').textContent='';input.focus();
+}
+function chooseTopic(topic){
+  if(previewBusy)return;
+  setPreviewMode('topic');
+  $('#landing-query').value=topic;
+  $('#landing-query').focus();
 }
 function isYouTubeVideoLink(value){
   try{
@@ -83,7 +92,10 @@ async function runFreePreview(){
   catch(error){$('#preview-error').textContent=error.message;}
   finally{previewBusy=false;$('#search-topic').disabled=false;$('#search-video').disabled=false;$('#preview-submit').disabled=false;$('#preview-submit').textContent=previewMode==='video'?'Read video comments →':'Find comments →';}
 }
-document.addEventListener('click',event=>{const button=event.target.closest('[data-waitlist]');if(button)openWaitlist(button.dataset.waitlist);});
+document.addEventListener('click',event=>{
+  const button=event.target.closest('[data-waitlist]');if(button)openWaitlist(button.dataset.waitlist);
+  const topic=event.target.closest('[data-topic]');if(topic)chooseTopic(topic.dataset.topic);
+});
 $('#preview-form').addEventListener('submit',event=>{event.preventDefault();runFreePreview();});
 $('#search-topic').addEventListener('change',()=>setPreviewMode('topic'));
 $('#search-video').addEventListener('change',()=>setPreviewMode('video'));

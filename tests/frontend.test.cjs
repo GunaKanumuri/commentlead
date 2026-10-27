@@ -43,3 +43,10 @@ test('invalid video links and URLs in topic mode never consume a preview',async(
  assert.equal(vm.runInContext("isYouTubeVideoLink('https://youtu.be/abcdefghijk')",scope),true);
  assert.equal(vm.runInContext("isYouTubeVideoLink('https://youtube.com/@founder')",scope),false);
 });
+
+test('topic suggestions switch out of video mode without starting a search',()=>{
+ const {scope,node}=setup();vm.runInContext("setPreviewMode('video');chooseTopic('AI text to video tools')",scope);
+ assert.equal(node('#search-topic').checked,true);assert.equal(node('#search-video').checked,false);
+ assert.equal(node('#landing-query').type,'text');assert.equal(node('#landing-query').value,'AI text to video tools');
+ assert.equal(node('#topic-suggestions').hidden,false);
+});
