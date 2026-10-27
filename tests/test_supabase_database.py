@@ -36,7 +36,7 @@ def profile():
 def test_complete_schema_is_private_repeatable_and_browser_roles_have_no_access(postgres):
     database.verify_schema();conn=database.connect()
     count=conn.execute("SELECT COUNT(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='app_private' AND c.relkind='r' AND c.relrowsecurity").fetchone()[0]
-    assert count==22
+    assert count==23
     assert not conn.execute("SELECT has_schema_privilege('anon','app_private','USAGE')").fetchone()[0]
     assert not conn.execute("SELECT has_table_privilege('authenticated','app_private.users','SELECT,INSERT,UPDATE,DELETE')").fetchone()[0]
     conn.close()

@@ -82,6 +82,7 @@ from backend.lead_routes import export_leads, owned_lead, set_outcome, workspace
 commerce.install(globals())
 commerce.install_lifecycle(globals())
 from backend.waitlist import join_waitlist,waitlist_mode
+from backend.analytics import usage_tracking
 if database.is_postgres():
     # Old mirror/key-editing endpoints are not part of the Supabase-only application.
     retired={'/api/auth/supabase-config','/api/auth/supabase-sync','/api/supabase/sync','/api/supabase/schema','/api/supabase/status'}

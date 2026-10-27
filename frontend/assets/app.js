@@ -1,4 +1,5 @@
 const FEATURE_LABELS={
+  'founder-discovery':'Find the people who need what you built.',
   'full-product':'A better way to find your people.',
   'matched-leads':'Find the right fit for your product.',
   'reply-drafts':'Start a more helpful conversation.',

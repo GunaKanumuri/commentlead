@@ -7,6 +7,8 @@ There is no public signup, password, account dashboard or checkout. Upcoming fea
 the waitlist dialog. Set `PUBLIC_LAUNCH_MODE=waitlist` (the default) to keep private routes closed.
 Waitlist entries are stored in the private Supabase `waitlist` table with consent and referral
 source; duplicate emails do not create additional entries. No email is sent on submission.
+Private daily visit and preview counters are available in Supabase; see
+[the analytics queries](docs/ANALYTICS.md). No public admin dashboard is needed.
 
 ## Project layout
 
