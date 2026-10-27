@@ -7,16 +7,23 @@ For a repository-root FastAPI deployment, `pyproject.toml` explicitly selects
 do not point this API project at `frontend/`. Leave custom build/output overrides unset.
 The `.vercelignore` allowlist excludes local credentials, SQLite data, tests and caches.
 Configure backend secrets in Vercel environment settings; local `.env` is not uploaded.
+Vercel installs from `pyproject.toml`, whose `[project].dependencies` declares the runtime
+packages explicitly. Keep these pins aligned with the runtime entries in requirements.txt.
 This resolves entry-point discovery only. Database setup below and separate job execution
 remain required; a successful API build does not start `backend.worker`.
+
+If startup configuration/database checks fail, the public homepage/assets remain available,
+health returns 503 and private API requests are blocked with 503. The standalone worker
+continues to fail fast. Processing, payments and unauthenticated data access stay disabled.
 
 The application now uses Supabase Postgres as its sole production database. Earlier notes
 about an active SQLite disk and two-way Supabase mirror are superseded by this architecture.
 
-1. Correct `SUPABASE_DB_URL`: the existing live check returns password authentication failed.
-2. Apply `supabase/migrations/202610270001_app_database.sql`, verify the private schema and RLS,
-   import the existing local data into the empty private schema, then compare counts and records.
-   Local data/backups have not been deleted; no live import has occurred.
+1. Database authentication and the private application schema are now verified. Copy the
+   required server configuration into Vercel Environment Variables; `.env` stays local.
+2. The prepared private schema is applied. Import the existing local data into the empty
+   private schema when ready, then compare counts and representative records. Local data
+   and backups have not been deleted; no live import has occurred.
 3. Verify login, signup confirmation, recovery and OAuth using Supabase on the final frontend URL.
    Frontend/public key configuration and exact CORS/redirect URLs must match that URL.
 4. Deploy the static frontend to Vercel in the next phase. Select hosting for the Python API and

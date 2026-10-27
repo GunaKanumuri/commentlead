@@ -1,11 +1,17 @@
 """System: focused API/service functions."""
 from backend import runtime as core
+from psycopg import Error as DatabaseError
 
 def get_db():
     return core.database.connect(sqlite_path=core.DB_PATH)
 
 @core.app.middleware('http')
 async def add_security_headers(request: core.Request, call_next):
+    if (getattr(core.app.state,'startup_error',None)
+            and request.url.path.startswith('/api/')
+            and request.url.path not in {'/api/health','/api/auth/config','/api/pricing'}):
+        from fastapi.responses import JSONResponse
+        return JSONResponse({'detail':'Application setup is incomplete. Please contact support.'},status_code=503)
     try:
         core.commerce.protect_request(request)
     except core.HTTPException as exc:
@@ -24,7 +30,7 @@ async def add_security_headers(request: core.Request, call_next):
     return response
 
 @core.app.get('/api/health')
-def health_check():
+def health_check(response: core.Response=None):
     sb_url, sb_key = core.supabase_config()
     try:
         conn = core.get_db()
@@ -35,19 +41,32 @@ def health_check():
         db_status = 'connected'
     except Exception as e:
         ws_count, lead_count = (0, 0)
-        db_status = f'error: {e}'
+        db_status = 'unavailable'
+    if getattr(core.app.state,'startup_error',None):db_status='setup_required'
+    if response is not None and db_status!='connected':response.status_code=503
     return {'status': 'ok' if db_status == 'connected' else 'degraded', 'version': '1.0.0', 'db': db_status, 'workspaces_count': ws_count, 'leads_count': lead_count, 'scheduler': core.scheduler.running, 'supabase_configured': bool(sb_url and sb_key), 'youtube_configured': bool(core.YT), 'gemini_configured': bool(core.GM), 'timestamp': core.datetime.now(core.timezone.utc).isoformat()}
 
 @core.app.get('/')
 def home():
     return core.FileResponse(core.FRONTEND_DIR / 'index.html')
 
-@core.app.on_event('startup')
 def commercial_startup():
     core.commerce.production_preflight()
     if core.database.is_postgres():
         core.database.verify_schema()
     core.__dict__['_COMMERCIAL_READY'] = True
+    core.app.state.startup_error=None
+
+
+@core.app.on_event('startup')
+def http_startup():
+    # Public assets can load while setup is repaired. Private APIs fail closed.
+    # The standalone worker calls commercial_startup() directly and still fails fast.
+    try:core.commercial_startup()
+    except (RuntimeError,DatabaseError) as error:
+        core.__dict__['_COMMERCIAL_READY']=False
+        core.app.state.startup_error='setup_required'
+        core.logger.error('Application setup failed (%s); private API requests are disabled',type(error).__name__)
 
 @core.app.on_event('shutdown')
 def shutdown():

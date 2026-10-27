@@ -41,7 +41,7 @@ source database in read-only mode. It refuses an occupied destination instead of
 existing Supabase users. Imported password hashes are cleared: users authenticate through
 Supabase, whose verified email/identity maps them to their existing product records.
 Never delete local data until row counts and representative leads/outcomes are verified live.
-The current live import is blocked by SQL authentication and has not been performed.
+The live schema is now applied and verified, but the local-data import has not been performed.
 
 ## Local processes
 

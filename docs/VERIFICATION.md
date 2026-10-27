@@ -24,3 +24,18 @@ separate later phases.
 
 Known non-failing test warnings: FastAPI on_event deprecation and Starlette/httpx test-client
 compatibility deprecation. The API lifecycle can move to lifespan handlers in a later cleanup.
+
+## Vercel runtime repair
+
+The previous tool-only pyproject.toml was selected as Vercel's dependency source but declared
+no application dependencies. It now declares the runtime packages explicitly. A clean venv
+installed only these declarations and imported FastAPI successfully. In that environment,
+the homepage, CSS, authentication JavaScript, public auth configuration and health endpoint
+all returned HTTP 200 against the initialized Supabase database.
+
+The private Supabase schema has now been applied and verified using the corrected database
+password. Existing local records were not imported or deleted. API startup tests verify that
+incomplete configuration keeps public pages available while private APIs return 503; the
+standalone worker retains strict startup checks. Regression run: 133 passed, seven disposable
+Postgres tests skipped (previously verified separately). The live deployment returned 500
+before this fix; post-push Vercel deployment verification is still required.

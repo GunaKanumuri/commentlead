@@ -37,12 +37,12 @@ Supabase Auth manages signup, login, email confirmation, password recovery and s
 All product data goes through the Python API into Supabase Postgres. There is no application
 SQLite fallback or two-way data mirror. SQLite exists only in explicitly isolated legacy tests.
 
-## Current setup blocker
+## Current setup status
 
-The configured Supabase project/public/server keys are present, but the SQL connection returns
-**password authentication failed**. Update `SUPABASE_DB_URL` locally using the database password
-from Supabase Connect. The project URL/API secret is not a database connection password.
-The live migration/import has not run. Existing local data and backups are preserved.
+Supabase database authentication now works, and the private application schema has been
+applied and verified. The existing local records have not been imported; their database and
+backups remain preserved. Configure the same server credentials in Vercel's Environment
+Variables: local `.env` is intentionally excluded from deployment uploads.
 
 See [setup](docs/SETUP.md), [architecture](docs/ARCHITECTURE.md), and [release checklist](docs/PREDEPLOY.md).
 
