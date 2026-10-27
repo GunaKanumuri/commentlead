@@ -2,7 +2,13 @@
 
 A small customer-discovery app: add a product, find source-backed matches, and track conversations.
 
-The current public launch offers a free YouTube comment preview and a simple email waitlist.
+The current public launch offers free product-specific matching and a simple email waitlist.
+Visitors enter working features, target customers, product stage and optional constraints.
+A preview checks up to three videos (35 comments each), assesses up to 60 recent candidates
+with Gemini, and returns up to five potential matches with exact source/feature quotes and
+unknowns. No unrelated fallback comments are displayed. Empty results describe this limited
+search, not overall market demand. Public preview requires `GEMINI_API_KEY` alongside YouTube
+and database settings; `PREVIEW_DAILY_AI_REQUEST_BUDGET` caps public AI requests including retries.
 There is no public signup, password, account dashboard or checkout. Upcoming features open
 the waitlist dialog. Set `PUBLIC_LAUNCH_MODE=waitlist` (the default) to keep private routes closed.
 Waitlist entries are stored in the private Supabase `waitlist` table with consent and referral

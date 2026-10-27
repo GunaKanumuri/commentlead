@@ -255,22 +255,5 @@ def login(b: core.Login):
 
 @core.app.post('/api/free-preview')
 def free_preview(b: core.FreePreview, request: core.Request=None):
-    q = (b.query or '').strip()
-    if not q:
-        raise core.HTTPException(400, 'Please enter a YouTube link, channel, or keyword')
-    vids = [] if b.mode=='topic' else core.video_ids(q)
-    if b.mode=='video' and not vids:
-        raise core.HTTPException(400,'Paste a valid YouTube video link, or choose search by topic.')
-    if not vids:
-        items = core.yt('search', part='snippet', q=q, type='video', maxResults=3).get('items', [])
-        vids = [item.get('id', {}).get('videoId') for item in items if item.get('id', {}).get('videoId')]
-    if not vids:
-        return {'video': None, 'leads': [], 'message': 'No videos found. Try a specific video or a different search.', 'qualified': False}
-    vid = vids[0]
-    cs = sorted((c for c in core.comments(vid, 35) if core.sieve(c)), key=lambda c: core.source_date(c.get('published_at')), reverse=True)
-    picked = []
-    for c in cs[:5]:
-        picked.append({'author': c['author'], 'published_at': c.get('published_at') or '', 'time': c.get('published_at') or 'Date unavailable', 'text': c['text'], 'intent': 'Unqualified comment', 'reply': '', 'comment_id': c['id'], 'link': f"https://www.youtube.com/watch?v={vid}&lc={c['id']}", 'video_url': f'https://www.youtube.com/watch?v={vid}'})
-    if request is not None:request.state.preview_result_count=len(picked)
-    first = cs[0] if cs else {}
-    return {'qualified': False, 'message': 'Real public comments, not verified leads. Join the waitlist for product matching.', 'video': {'video_id': vid, 'title': first.get('title') or 'YouTube video', 'channel': first.get('channel') or '', 'video_url': f'https://www.youtube.com/watch?v={vid}', 'channel_url': f"https://www.youtube.com/channel/{first['cid']}" if first.get('cid') else f'https://www.youtube.com/watch?v={vid}', 'thumbnail': f'https://i.ytimg.com/vi/{vid}/hqdefault.jpg', 'meta': 'Source: YouTube Data API'}, 'leads': picked}
+    from backend.preview import discover
+    return discover(b,request)

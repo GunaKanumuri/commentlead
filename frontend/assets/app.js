@@ -19,10 +19,10 @@ function setPreviewMode(mode){
   $('#topic-suggestions').hidden=video;
   input.value=previewInputs[previewMode];input.type=video?'url':'text';
   input.placeholder=video?'https://www.youtube.com/watch?v=…':'e.g. invoicing for freelancers';
-  $('#query-label').textContent=video?'Which YouTube video should we read?':'What problem does your product solve?';
-  $('#query-help').textContent=video?'Paste a single YouTube video or Shorts link. We’ll preview comments from that video.':'Enter a topic, not your product website. We’ll find a related YouTube video and preview its comments.';
+  $('#query-label').textContent=video?'Which YouTube video should we read?':'What topic would your customers search for?';
+  $('#query-help').textContent=video?'Paste a single YouTube video or Shorts link. We’ll assess its comments against your product.':'Enter a topic, not your product website. We’ll check up to 3 related YouTube videos and assess comments against your product.';
   $('#query-mark').textContent=video?'▶':'⌕';
-  $('#preview-submit').textContent=video?'Read video comments →':'Find comments →';
+  $('#preview-submit').textContent=video?'Find matches in video →':'Find opportunities →';
   $('#preview-error').textContent='';input.focus();
 }
 function chooseTopic(topic){
@@ -30,6 +30,14 @@ function chooseTopic(topic){
   setPreviewMode('topic');
   $('#landing-query').value=topic;
   $('#landing-query').focus();
+}
+function useBharatChitraExample(){
+  if(previewBusy)return;
+  $('#product-description').value='BharatChitra AI is a development prototype for creating short videos from ideas or scripts. AI script generation, image generation, Telugu voice narration and video assembly have been demonstrated in development. Telugu and Hindi audio have been tested locally.';
+  $('#product-customer').value='YouTube Shorts creators, Telugu/Hindi storytellers, educators, faceless-channel owners and small businesses.';
+  $('#product-readiness').value='prototype';
+  $('#product-constraints').value='Development only; production end-to-end support and English remain unverified. No verified public prices: do not claim free or unlimited generation. Six visual styles, captions, thumbnails, hashtags, YouTube scheduling and AI Growth Coach are planned, not available. Exclude needs requiring guaranteed one-click publishing or fully automated production.';
+  chooseTopic('AI short video creation Telugu Hindi narration');
 }
 function isYouTubeVideoLink(value){
   try{
@@ -73,24 +81,34 @@ function youtubeLink(value){
   try{const url=new URL(value);return url.protocol==='https:'&&['www.youtube.com','youtube.com','youtu.be'].includes(url.hostname)?url.href:'https://www.youtube.com/';}
   catch{return 'https://www.youtube.com/';}
 }
+function matchEvidence(lead){
+  const e=lead.evidence;if(!e||typeof e!=='object')return '';
+  const unknowns=Array.isArray(e.unknowns)?e.unknowns:[];
+  return `<dl class="match-evidence"><div><dt>Customer need</dt><dd>${esc(e.need)}</dd></div><div><dt>Evidence from their comment</dt><dd><q>${esc(e.quote)}</q></dd></div><div><dt>Your matching feature</dt><dd>${esc(e.feature)}</dd></div><div><dt>Why it could fit</dt><dd>${esc(e.reason)}</dd></div></dl><p class="match-unknowns"><b>Still unknown:</b> ${unknowns.map(esc).join(' · ')}</p>`;
+}
 function renderPreview(result){
   const leads=Array.isArray(result.leads)?result.leads:[];
-  $('#preview-heading').textContent=leads.length?`${leads.length} real comment${leads.length===1?'':'s'} to explore`:'No comments to show yet';
+  $('#preview-heading').textContent=leads.length?`${leads.length} potential ${result.readiness==='prototype'?'early-access conversation':'match'}${leads.length===1?'':'s'}`:result.partial?'Search incomplete':'No relevant opportunities found';
+  const stats=result.stats||{};
+  $('#preview-summary').textContent=`${Number(stats.videos_checked)||0} videos checked · ${Number(stats.comments_read)||0} comments read · ${Number(stats.comments_assessed)||0} assessed · ${leads.length} potential matches. ${result.message||''} ${result.scope||''}`;
   const video=result.video;
-  $('#preview-video-card').innerHTML=video?`<div class="video-banner"><div><h3>${esc(video.title)}</h3><p>${esc(video.channel||'YouTube')} · Source: YouTube Data API</p></div><a class="source-link" href="${esc(youtubeLink(video.video_url))}" target="_blank" rel="noopener noreferrer">Open video ↗</a></div>`:'';
-  $('#preview-leads-list').innerHTML=leads.map(lead=>`<article class="comment-card"><div class="comment-top"><span class="avatar clay" aria-hidden="true">${esc((lead.author||'Y').replace(/^@/,'').slice(0,1).toUpperCase())}</span><b>${esc(lead.author||'YouTube commenter')}</b><time>${esc(sourceDate(lead.published_at))}</time></div><p>${esc(lead.text)}</p><div class="comment-bottom"><span class="tag">Source comment · buying intent unverified</span><a class="source-link" href="${esc(youtubeLink(lead.link))}" target="_blank" rel="noopener noreferrer">View original comment ↗</a></div></article>`).join('')||`<p>${esc(result.message||'Try a different topic or a specific video link.')}</p>`;
+  const videos=Array.isArray(result.videos)?result.videos:video?[video]:[];
+  $('#preview-video-card').innerHTML=videos.map(item=>`<div class="video-banner"><div><h3>${esc(item.title)}</h3><p>${esc(item.channel||'YouTube')} · Source: YouTube Data API</p></div><a class="source-link" href="${esc(youtubeLink(item.video_url))}" target="_blank" rel="noopener noreferrer">Open video ↗</a></div>`).join('');
+  $('#preview-leads-list').innerHTML=leads.map(lead=>`<article class="comment-card"><div class="comment-top"><span class="avatar clay" aria-hidden="true">${esc((lead.author||'Y').replace(/^@/,'').slice(0,1).toUpperCase())}</span><b>${esc(lead.author||'YouTube commenter')}</b><time>${esc(sourceDate(lead.published_at))}</time></div><p>${esc(lead.text)}</p>${matchEvidence(lead)}<div class="comment-bottom"><span class="tag">${esc(lead.intent||'Buying intent unverified')}</span><a class="source-link" href="${esc(youtubeLink(lead.link))}" target="_blank" rel="noopener noreferrer">View original comment ↗</a></div></article>`).join('');
 }
 async function runFreePreview(){
   if(previewBusy)return;
   const query=$('#landing-query').value.trim();if(!query)return;
   if(previewMode==='video'&&!isYouTubeVideoLink(query)){$('#preview-error').textContent='Paste a YouTube video link, such as https://www.youtube.com/watch?v=VIDEO_ID. Channel and website links are not supported here.';return;}
   if(previewMode==='topic'&&/^(https?:\/\/|www\.)/i.test(query)){$('#preview-error').textContent='Enter a topic here, such as invoicing for freelancers. To paste a video link, choose “I have a YouTube video link”.';return;}
+  const product={description:$('#product-description').value.trim(),customer:$('#product-customer').value.trim(),constraints:$('#product-constraints').value.trim(),readiness:$('#product-readiness').value};
+  if(product.description.length<15||product.customer.length<3){$('#preview-error').textContent='Describe the features that work today and who your product is for. We need this to assess real relevance.';return;}
   $('#search-topic').disabled=true;$('#search-video').disabled=true;
   previewBusy=true;$('#preview-submit').disabled=true;$('#preview-submit').textContent='Reading comments…';$('#preview-error').textContent='';
-  $('#preview-video-card').innerHTML='';$('#preview-leads-list').innerHTML='';$('#preview-results').hidden=true;
-  try{const result=await api('free-preview',{query,mode:previewMode});renderPreview(result);$('#preview-results').hidden=false;$('#preview-results').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  $('#preview-video-card').innerHTML='';$('#preview-leads-list').innerHTML='';$('#preview-summary').textContent='';$('#preview-results').hidden=true;
+  try{const result=await api('free-preview',{query,mode:previewMode,product});renderPreview(result);$('#preview-results').hidden=false;$('#preview-results').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
   catch(error){$('#preview-error').textContent=error.message;}
-  finally{previewBusy=false;$('#search-topic').disabled=false;$('#search-video').disabled=false;$('#preview-submit').disabled=false;$('#preview-submit').textContent=previewMode==='video'?'Read video comments →':'Find comments →';}
+  finally{previewBusy=false;$('#search-topic').disabled=false;$('#search-video').disabled=false;$('#preview-submit').disabled=false;$('#preview-submit').textContent=previewMode==='video'?'Find matches in video →':'Find opportunities →';}
 }
 document.addEventListener('click',event=>{
   const button=event.target.closest('[data-waitlist]');if(button)openWaitlist(button.dataset.waitlist);
@@ -99,6 +117,7 @@ document.addEventListener('click',event=>{
 $('#preview-form').addEventListener('submit',event=>{event.preventDefault();runFreePreview();});
 $('#search-topic').addEventListener('change',()=>setPreviewMode('topic'));
 $('#search-video').addEventListener('change',()=>setPreviewMode('video'));
+$('#bharatchitra-example').addEventListener('click',useBharatChitraExample);
 $('#waitlist-form').addEventListener('submit',event=>{event.preventDefault();submitWaitlist();});
 $('#waitlist-close').addEventListener('click',closeWaitlist);
 $('#waitlist-done').addEventListener('click',closeWaitlist);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Preview real YouTube comments for free. No account required. Join the waitlist for product-matched leads, reply drafts and saved conversations.">
+<meta name="description" content="Find potential customer needs matched to your working product features, with source evidence. Free limited preview, no account required.">
 <title>CommentSales | Find your next customer conversation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,12 +32,19 @@
       <h1 id="hero-title">Find people asking<br><em>for what you’re building.</em></h1>
       <p class="hero-sub">See what people are asking about tools, alternatives and solutions. Find conversations around what you’re building—no account needed.</p>
       <form id="preview-form" class="preview-form">
-        <fieldset class="search-options"><legend>How would you like to find comments?</legend><label><input type="radio" name="search-mode" id="search-topic" value="topic" checked> Search by topic</label><label><input type="radio" name="search-mode" id="search-video" value="video"> I have a YouTube video link</label></fieldset>
-        <label for="landing-query" class="field-label" id="query-label">What problem does your product solve?</label>
-        <div class="search-row"><span class="search-mark" id="query-mark" aria-hidden="true">⌕</span><input id="landing-query" name="query" type="text" required maxlength="500" aria-describedby="query-help" placeholder="e.g. invoicing for freelancers"><button class="btn-brown" id="preview-submit" type="submit">Find comments <span aria-hidden="true">→</span></button></div>
-        <p class="query-help" id="query-help">Enter a topic, not your product website. We’ll find a related YouTube video and preview its comments.</p>
+        <fieldset class="product-profile"><legend>1. Tell us what your product can actually do</legend>
+          <button class="text-button example-fill" id="bharatchitra-example" type="button">Try the BharatChitra example ↗</button>
+          <label class="field-label" for="product-description">Which features work today?</label><textarea class="field-input" id="product-description" required minlength="15" maxlength="1500" rows="3" placeholder="e.g. My app creates short videos from scripts with Telugu narration. Working features only, not your roadmap."></textarea>
+          <label class="field-label" for="product-customer">Who is it for?</label><input class="field-input" id="product-customer" required minlength="3" maxlength="400" placeholder="e.g. Telugu YouTube Shorts creators">
+          <div class="profile-ready"><label class="field-label" for="product-readiness">Product stage</label><select class="field-input" id="product-readiness"><option value="prototype">Prototype / early access</option><option value="available">Available to customers today</option></select></div>
+          <details><summary>Languages, price or limitations <span>(optional)</span></summary><label class="field-label" for="product-constraints">What should we respect or exclude?</label><textarea class="field-input" id="product-constraints" maxlength="700" rows="3" placeholder="e.g. Telugu only. India delivery only. No free plan. Publishing is not available yet."></textarea></details>
+        </fieldset>
+        <fieldset class="search-options"><legend>2. Where should we look for customer needs?</legend><label><input type="radio" name="search-mode" id="search-topic" value="topic" checked> Search by topic</label><label><input type="radio" name="search-mode" id="search-video" value="video"> I have a YouTube video link</label></fieldset>
+        <label for="landing-query" class="field-label" id="query-label">What topic would your customers search for?</label>
+        <div class="search-row"><span class="search-mark" id="query-mark" aria-hidden="true">⌕</span><input id="landing-query" name="query" type="text" required maxlength="500" aria-describedby="query-help" placeholder="e.g. invoicing for freelancers"><button class="btn-brown" id="preview-submit" type="submit">Find opportunities <span aria-hidden="true">→</span></button></div>
+        <p class="query-help" id="query-help">Enter a topic, not your product website. We’ll check up to 3 related YouTube videos and assess comments against your product.</p>
         <div class="topic-suggestions" id="topic-suggestions"><span>Try a topic:</span><button type="button" data-topic="invoicing for freelancers">invoicing app</button><button type="button" data-topic="AI text to video tools">AI video tool</button><button type="button" data-topic="WhatsApp for seniors">WhatsApp for seniors</button><button type="button" data-topic="event planning tools">event planning</button><button type="button" data-topic="custom eggless cakes">eggless cake</button></div>
-        <label class="consent"><input id="preview-policy" type="checkbox" required><span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and have read the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+        <label class="consent"><input id="preview-policy" type="checkbox" required><span>I agree to AI assessment of my product details and public comments under the <a href="/terms" target="_blank" rel="noopener">Terms</a> and have read the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       </form>
       <p class="hero-meta"><span class="trust-check" aria-hidden="true">✓</span><span>No login required</span><span>Free to explore</span><span>Real YouTube source links</span></p>
       <p id="preview-error" class="form-message error" role="alert"></p>
@@ -58,10 +65,10 @@
 
   <section id="preview-results" class="results" aria-labelledby="preview-heading" hidden>
     <div class="section-heading"><div><p class="eyebrow">YOUR FREE PREVIEW</p><h2 id="preview-heading">Explore the conversation</h2></div><span class="status-pill">No account required</span></div>
-    <p class="section-sub">These are source comments, not verified buyers. Location, budget and product fit may be unknown.</p>
-    <div id="preview-video-card"></div>
+    <p class="section-sub">These are potential matches assessed by AI, not verified buyers. Check the quoted evidence and unknowns before reaching out.</p>
+    <div id="preview-summary" class="preview-summary" aria-live="polite"></div><div id="preview-video-card"></div>
     <div id="preview-leads-list" class="comment-list" aria-live="polite"></div>
-    <div class="result-callout"><div><h3>Want to find the right fit for your product?</h3><p>Product matching and reply drafts are coming next.</p></div><button class="btn-brown" data-waitlist="matched-leads">Notify me at launch ↗</button></div>
+    <div class="result-callout"><div><h3>Want to find the right fit for your product?</h3><p>Save your matches and draft thoughtful replies when the full product launches.</p></div><button class="btn-brown" data-waitlist="matched-leads">Notify me at launch ↗</button></div>
   </section>
 
 
@@ -73,21 +80,21 @@
       <article class="audience-card"><span class="audience-icon lilac"><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg></span><span class="audience-label">EARLY-STAGE STARTUPS</span><h3>Understand the need before your pitch.</h3><p>Launching a customer-support tool? Read what small teams struggle with, which tools they use, and what they wish worked differently.</p><blockquote>“We lose customer messages between WhatsApp and email. Any suggestions?”</blockquote><span class="example-note">Illustrative customer question</span><button class="text-button" data-waitlist="founder-discovery">Join the founder waitlist →</button></article>
       <article class="audience-card"><span class="audience-icon mint"><svg class="icon" aria-hidden="true"><use href="#icon-shop"/></svg></span><span class="audience-label">HOMEMADE &amp; LOCAL SELLERS</span><h3>Discover questions around what you make.</h3><p>Selling homemade products? Explore relevant videos for questions about price, ingredients or delivery. Check the actual location and need before reaching out.</p><blockquote>“Where can I order a custom eggless cake in Hyderabad?”</blockquote><span class="example-note">Illustrative customer question</span><a class="text-button" href="#free-preview">Explore comments for free →</a></article>
     </div>
-    <p class="audience-footnote">The free preview shows source comments for you to review. Product matching is waitlist-only; a comment does not guarantee a customer.</p>
+    <p class="audience-footnote">The free preview assesses product fit and shows source evidence for you to review. A potential match does not guarantee a customer.</p>
   </section>
 
   <section class="how-it-works" id="how-it-works" aria-labelledby="how-title">
     <div class="how-intro"><h2 id="how-title">How it works</h2><p>From a topic to real customer questions.</p></div>
     <div class="process-step"><span class="step">1</span><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg><h3>Enter a topic</h3><p>Describe a problem your product solves, or paste a video link.</p></div>
-    <div class="process-step"><span class="step">2</span><svg class="icon" aria-hidden="true"><use href="#icon-video"/></svg><h3>Find a relevant video</h3><p>We search YouTube for a related video when you enter a topic.</p></div>
-    <div class="process-step"><span class="step">3</span><svg class="icon" aria-hidden="true"><use href="#icon-chat"/></svg><h3>Read real comments</h3><p>Explore questions and open the source for the full context.</p></div>
+    <div class="process-step"><span class="step">2</span><svg class="icon" aria-hidden="true"><use href="#icon-video"/></svg><h3>Find a relevant video</h3><p>We check up to 3 related YouTube videos when you enter a topic.</p></div>
+    <div class="process-step"><span class="step">3</span><svg class="icon" aria-hidden="true"><use href="#icon-chat"/></svg><h3>Read real comments</h3><p>See needs that match your working features, with exact source evidence.</p></div>
     <div class="process-step"><span class="step">4</span><svg class="icon" aria-hidden="true"><use href="#icon-bulb"/></svg><h3>Understand the need</h3><p>Use your judgment to decide whether your product could help.</p></div>
   </section>
 
   <section id="coming-next" class="coming-next" aria-labelledby="coming-title">
-    <div class="section-heading"><div><p class="eyebrow">HELP SHAPE THE PRODUCT</p><h2 id="coming-title">Try the preview.<br>Tell us what to build next.</h2></div><p class="section-sub">The free preview is open today.<br>These planned features are waitlist-only.</p></div>
+    <div class="section-heading"><div><p class="eyebrow">HELP SHAPE THE PRODUCT</p><h2 id="coming-title">Try the preview.<br>Tell us what to build next.</h2></div><p class="section-sub">Small product-matching previews are free.<br>These larger features are waitlist-only.</p></div>
     <div class="feature-grid">
-      <article class="feature-card"><span class="feature-icon" aria-hidden="true">◎</span><span class="coming-badge">PLANNED</span><h3>Matches for your product</h3><p>Find comments that match what you sell, with the evidence and unknowns explained.</p><button class="text-button" data-waitlist="matched-leads">Join the waitlist <span aria-hidden="true">↗</span></button></article>
+      <article class="feature-card"><span class="feature-icon" aria-hidden="true">◎</span><span class="coming-badge">PLANNED</span><h3>Deeper product discovery</h3><p>The free preview includes product matching. Join the waitlist for larger searches and more products.</p><button class="text-button" data-waitlist="matched-leads">Join the waitlist <span aria-hidden="true">↗</span></button></article>
       <article class="feature-card"><span class="feature-icon" aria-hidden="true">✎</span><span class="coming-badge">PLANNED</span><h3>A thoughtful first reply</h3><p>Get a draft grounded in the customer's words and your actual product features.</p><button class="text-button" data-waitlist="reply-drafts">Join the waitlist <span aria-hidden="true">↗</span></button></article>
       <article class="feature-card"><span class="feature-icon" aria-hidden="true">▤</span><span class="coming-badge">PLANNED</span><h3>Save the conversations</h3><p>Keep useful matches together and track what happens after you reach out.</p><button class="text-button" data-waitlist="saved-leads">Join the waitlist <span aria-hidden="true">↗</span></button></article>
       <article class="feature-card"><span class="feature-icon" aria-hidden="true">↻</span><span class="coming-badge">PLANNED</span><h3>Let discovery come to you</h3><p>Get fresh searches for your products without starting from scratch each time.</p><button class="text-button" data-waitlist="automated-search">Join the waitlist <span aria-hidden="true">↗</span></button></article>

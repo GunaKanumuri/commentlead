@@ -24,9 +24,17 @@ class SupabaseConfigUpdate(BaseModel):
 class EmailAction(BaseModel):
     email: str
 
+class PreviewProduct(BaseModel):
+    model_config=ConfigDict(str_strip_whitespace=True,extra='forbid')
+    description: str=Field(min_length=15,max_length=1500)
+    customer: str=Field(min_length=3,max_length=400)
+    constraints: str=Field(default='',max_length=700)
+    readiness: Literal['prototype','available']='prototype'
+
 class FreePreview(BaseModel):
-    query: str
+    query: str=Field(min_length=2,max_length=500)
     mode: Literal['auto','topic','video']='auto'
+    product: PreviewProduct
 
 class MatchingProfile(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra='forbid')

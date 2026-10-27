@@ -130,6 +130,9 @@ def gem(prompt):
             except ValueError:
                 data = {}
             core.complete_api_call(uid, str(response.status_code), data.get('usageMetadata'), model)
+            if response.status_code==429:
+                # Retrying exhausted daily quota immediately cannot produce an assessment.
+                raise core.HTTPException(429,'AI matching capacity is currently exhausted. Please try later; no unassessed comments will be shown.')
             if response.status_code == 200:
                 try:
                     return core.clean_json(data['candidates'][0]['content']['parts'][0]['text'])

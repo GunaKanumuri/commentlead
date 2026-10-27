@@ -50,3 +50,25 @@ test('topic suggestions switch out of video mode without starting a search',()=>
  assert.equal(node('#landing-query').type,'text');assert.equal(node('#landing-query').value,'AI text to video tools');
  assert.equal(node('#topic-suggestions').hidden,false);
 });
+
+test('BharatChitra example separates demonstrated capabilities from planned features',()=>{
+ const {scope,node}=setup();vm.runInContext('useBharatChitraExample()',scope);
+ assert.equal(node('#product-readiness').value,'prototype');
+ assert.match(node('#product-description').value,/demonstrated in development/);
+ assert.doesNotMatch(node('#product-description').value,/YouTube scheduling/);
+ assert.match(node('#product-constraints').value,/English remain unverified/);
+ assert.match(node('#product-constraints').value,/do not claim free or unlimited/);
+});
+test('missing product profile blocks provider requests and empty results never fill with comments',async()=>{
+ const {scope,node}=setup();let calls=0;scope.fetch=async()=>{calls++;throw Error('Unexpected');};
+ node('#landing-query').value='AI video tools';await vm.runInContext('runFreePreview()',scope);
+ assert.equal(calls,0);assert.match(node('#preview-error').textContent,/features that work today/);
+ vm.runInContext('renderPreview({leads:[],stats:{videos_checked:3,comments_read:105,comments_assessed:60},message:"No relevant opportunities found"})',scope);
+ assert.equal(node('#preview-heading').textContent,'No relevant opportunities found');
+ assert.equal(node('#preview-leads-list').innerHTML,'');assert.match(node('#preview-summary').textContent,/105 comments read/);
+});
+test('matching evidence is escaped and includes unknowns',()=>{
+ const {scope,node}=setup();vm.runInContext(`renderPreview({leads:[{text:'Need Telugu narration',evidence:{need:'<script>bad</script>',quote:'Telugu narration',feature:'Telugu voice narration',reason:'Requested language',unknowns:['Budget unverified']}}]})`,scope);
+ assert.match(node('#preview-leads-list').innerHTML,/&lt;script&gt;/);assert.match(node('#preview-leads-list').innerHTML,/Budget unverified/);
+ assert.match(node('#preview-leads-list').innerHTML,/Your matching feature/);
+});

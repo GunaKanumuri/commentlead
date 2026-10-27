@@ -11,7 +11,7 @@ async function api(path,body){
   let result;try{result=await response.json();}catch{throw new Error('This service is temporarily unavailable. Please try again later.');}
   if(!response.ok){
     if(response.status===503||response.status>=500)throw new Error('This service is temporarily unavailable. Please try again later.');
-    if(response.status===429)throw new Error('This service is busy right now. Please try again later.');
+    if(response.status===429)throw new Error(typeof result.detail==='string'?result.detail:'This service is busy right now. Please try again later.');
     throw new Error(typeof result.detail==='string'?result.detail:'Please check the details and try again.');
   }
   return result;

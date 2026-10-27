@@ -121,6 +121,11 @@ def begin_api_call(provider, operation):
             spent = conn.execute('SELECT COALESCE(SUM(units),0) FROM api_usage WHERE bucket=? AND funding=? AND created_at>=?', (bucket, funding, core.quota_day_start_utc())).fetchone()[0]
             if spent >= funding_cap:
                 raise core.HTTPException(429, 'This service capacity pool is full for today; paid capacity is reserved separately')
+        if bucket=='gemini' and funding=='public':
+            public_cap=int(core.os.getenv('PREVIEW_DAILY_AI_REQUEST_BUDGET','20'))
+            public_used=conn.execute("SELECT COALESCE(SUM(units),0) FROM api_usage WHERE bucket='gemini' AND funding='public' AND created_at>=?",(core.quota_day_start_utc(),)).fetchone()[0]
+            if public_used>=public_cap:
+                raise core.HTTPException(429,'Free product-matching capacity is full for today. Try again tomorrow.')
         if bucket == 'gemini' and ctx.get('user_id'):
             per_user = int(core.os.getenv('GEMINI_REQUESTS_PER_USER_DAY', '50'))
             spent = conn.execute("SELECT COUNT(*) FROM api_usage WHERE provider='gemini' AND user_id=? AND created_at>=?", (ctx['user_id'], core.quota_day_start_utc())).fetchone()[0]

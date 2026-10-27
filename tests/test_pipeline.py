@@ -987,16 +987,16 @@ def _pilot_comment(**values):
 def test_preview_never_fabricates_on_api_failure():
     with patch("backend.runtime.video_ids",return_value=["abcdefghijk"]), patch("backend.runtime.comments",side_effect=HTTPException(429,"Quota reached")):
         with pytest.raises(HTTPException) as exc:
-            app.free_preview(app.FreePreview(query="test"))
+            app.free_preview(app.FreePreview(product={"description":"A tool that offers lead scoring for small software founders.","customer":"Small software founders"},query="test"))
     assert exc.value.status_code==429
 
 
 def test_preview_empty_and_real_source_metadata():
     with patch("backend.runtime.video_ids",return_value=[]),patch("backend.runtime.yt",return_value={"items":[]}):
-        result=app.free_preview(app.FreePreview(query="no results"))
+        result=app.free_preview(app.FreePreview(product={"description":"A tool that offers lead scoring for small software founders.","customer":"Small software founders"},query="no results"))
     assert result["leads"]==[] and result["video"] is None and result["qualified"] is False
-    with patch("backend.runtime.video_ids",return_value=["abcdefghijk"]),patch("backend.runtime.comments",return_value=[_pilot_comment()]):
-        result=app.free_preview(app.FreePreview(query="test"))
+    with patch("backend.runtime.video_ids",return_value=["abcdefghijk"]),patch("backend.runtime.comments",return_value=[_pilot_comment()]),patch("backend.runtime.gem",return_value={"results":[{"i":0,"buyer_type":"buyer","direct_match":True,"intent":"recommendation","need":"Needs lead scoring","quote":"lead scoring","feature":"lead scoring","reason":"The product offers the requested feature."}]}):
+        result=app.free_preview(app.FreePreview(product={"description":"A tool that offers lead scoring for small software founders.","customer":"Small software founders"},query="test"))
     assert result["leads"][0]["text"]==_pilot_comment()["text"]
     assert result["leads"][0]["published_at"]==_pilot_comment()["published_at"]
     assert result["leads"][0]["reply"]=="" and result["qualified"] is False
@@ -1224,7 +1224,7 @@ def test_public_local_signup_cannot_claim_an_administrator_address():
 
 def test_preview_topic_mode_never_interprets_topic_as_video_id():
     with patch.object(app,'video_ids') as ids,patch.object(app,'yt',return_value={'items':[]}) as search:
-        result=app.free_preview(app.FreePreview(query='photography',mode='topic'))
+        result=app.free_preview(app.FreePreview(product={"description":"A tool that offers lead scoring for small software founders.","customer":"Small software founders"},query='photography',mode='topic'))
     ids.assert_not_called()
     assert search.call_args.kwargs['q']=='photography'
     assert result['leads']==[]
@@ -1232,6 +1232,6 @@ def test_preview_topic_mode_never_interprets_topic_as_video_id():
 def test_preview_video_mode_does_not_fall_back_to_keyword_search():
     with patch.object(app,'video_ids',return_value=[]),patch.object(app,'yt') as search:
         with pytest.raises(HTTPException) as exc:
-            app.free_preview(app.FreePreview(query='not a video',mode='video'))
+            app.free_preview(app.FreePreview(product={"description":"A tool that offers lead scoring for small software founders.","customer":"Small software founders"},query='not a video',mode='video'))
     assert exc.value.status_code==400
     search.assert_not_called()
