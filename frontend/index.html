@@ -3,520 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Comment → Money | Turn YouTube comments into real customers</title>
+<meta name="description" content="Preview real YouTube comments for free. No account required. Join the waitlist for product-matched leads, reply drafts and saved conversations.">
+<title>Comment → Money | Free comment preview</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
-
-<!-- =========================================================
-     SCREEN 1: LANDING PAGE (BEFORE LOGIN)
-     ========================================================= -->
-<div id="screen-landing" class="landing-wrap" hidden>
-  <header class="public-nav">
-    <div class="brand-logo" onclick="showScreen('landing')">
-      <span class="brand-icon">▶</span>
-      <span>Comment <span class="brand-arrow">→</span> Money</span>
+<header class="public-nav wrap">
+  <a class="brand" href="#" aria-label="Comment to Money home"><span class="brand-icon">▶</span> Comment <span class="brand-arrow">→</span> Money</a>
+  <nav aria-label="Main navigation"><a href="#free-preview">Try for free</a><a href="#coming-next">Coming next</a><button class="btn-brown" data-waitlist="full-product">Join the waitlist <span aria-hidden="true">↗</span></button></nav>
+</header>
+<main class="wrap">
+  <section class="hero" id="free-preview" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="live-dot"></span> FREE PREVIEW · OPEN TO EVERYONE</p>
+      <h1 id="hero-title">Good conversations.<br><em>Your next opportunity.</em></h1>
+      <p class="hero-sub">Your future customers might already be asking questions. Start by exploring real YouTube comments—no account needed.</p>
+      <form id="preview-form" class="preview-form">
+        <label for="landing-query" class="field-label">Explore a video, channel or topic</label>
+        <div class="search-row"><span class="youtube-mark" aria-hidden="true">▶</span><input id="landing-query" name="query" required maxlength="500" placeholder="Paste a YouTube link or enter a topic"><button class="btn-brown" id="preview-submit" type="submit">Preview comments <span aria-hidden="true">→</span></button></div>
+        <label class="consent"><input id="preview-policy" type="checkbox" required><span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and have read the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+      </form>
+      <p class="hero-meta"><span>✓ No signup</span><span>✓ No credit card</span><span>✓ Real source links</span></p>
+      <p id="preview-error" class="form-message error" role="alert"></p>
     </div>
-    <nav class="nav-links">
-      <a href="#how-it-works" onclick="showScreen('landing')">How it works</a>
-      <a href="#pricing" onclick="showScreen('pricing');return false">Pricing</a>
-      <a href="#examples" onclick="runFreePreview('best productivity apps 2026');return false">Examples</a>
-      <a href="#faq" onclick="openAppDashboard();return false">Dashboard</a>
-    </nav>
-    <div class="nav-actions">
-      <button class="btn-outline" onclick="openAuthScreen('login')">Log in</button>
-      <button class="btn-brown" onclick="openAuthScreen('register')">Sign up</button>
-    </div>
-  </header>
-
-  <section class="hero-section">
-    <div>
-      <h1 class="hero-title">
-        Turn YouTube<br>comments into
-        <em>real customers.</em>
-      </h1>
-      <p class="hero-sub">
-        Search videos, read comments, find people who need what you sell, and get ready-to-copy replies.
-      </p>
-      <div class="hero-search-box">
-        <span class="yt-badge">▶</span>
-        <input id="landing-query" placeholder="Paste a YouTube video, channel or keyword..." onkeydown="if(event.key==='Enter')runFreePreview()">
-        <button class="btn-brown" id="landing-search-btn" onclick="runFreePreview()">Preview Comments →</button>
-      </div>
-      <p style="font-size:12px"><label><input id="preview-policy" type="checkbox"> I have read and agree to the <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.</label></p>
-  <div class="hero-meta">
-        <span>No login required</span>
-        <span>Real comment preview</span>
-        <span>Upgrade to search more</span>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="yt-mock-video">
-        <div class="yt-mock-play">▶</div>
-      </div>
-      <div class="float-comments">
-        <div class="mock-comment-card">
-          <div class="avatar">S</div>
-          <div>
-            <div class="mock-c-title">Is there a cheaper alternative for this in India?</div>
-            <div class="mock-c-meta"><span>Illustrative example</span></div>
-          </div>
-        </div>
-        <div class="mock-comment-card">
-          <div class="avatar a2">P</div>
-          <div>
-            <div class="mock-c-title">Does this work on Windows?</div>
-            <div class="mock-c-meta"><span>Illustrative example</span></div>
-          </div>
-        </div>
-        <div class="mock-comment-card">
-          <div class="avatar a3">A</div>
-          <div>
-            <div class="mock-c-title">Any free option available?</div>
-            <div class="mock-c-meta"><span>Illustrative example</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="handwritten-note">
-        ↗ Illustrative<br>sample comments
-      </div>
-    </div>
+    <aside class="example-board" aria-label="Illustrative comment examples">
+      <div class="board-heading"><span class="tiny-label">CONVERSATIONS ARE ALREADY HAPPENING</span><span aria-hidden="true">↗</span></div>
+      <div class="example-comment"><span class="avatar clay">S</span><div><p>“Is there a simpler alternative for a small team?”</p><span class="tag">Asking for an alternative</span></div></div>
+      <div class="example-comment second"><span class="avatar sage">P</span><div><p>“Does anyone know a tool that can help with this?”</p><span class="tag green">Looking for a recommendation</span></div></div>
+      <div class="example-comment third"><span class="avatar sand">A</span><div><p>“What's the price? Is it available in Hyderabad?”</p><span class="tag">Questions worth understanding</span></div></div>
+      <p class="example-note">Illustrative examples. Try a search to see real comments.</p>
+    </aside>
   </section>
 
-  <section class="trust-strip" id="how-it-works">
-    <div class="trust-item">
-      <div class="trust-icon">💬</div>
-      <div>
-        <div class="trust-num">Public comments</div>
-        <div class="trust-lbl">Every result links to its source</div>
-      </div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-icon">⚡</div>
-      <div>
-        <div class="trust-num">Your review</div>
-        <div class="trust-lbl">Track useful conversations and purchases</div>
-      </div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-icon">👤</div>
-      <div>
-        <div class="trust-num" style="font-size:19px">Founder pilot</div>
-        <div class="trust-lbl">Software founders first; a small homemade-business pilot</div>
-      </div>
-    </div>
+  <section id="preview-results" class="results" aria-labelledby="preview-heading" hidden>
+    <div class="section-heading"><div><p class="eyebrow">YOUR FREE PREVIEW</p><h2 id="preview-heading">Explore the conversation</h2></div><span class="status-pill">No account required</span></div>
+    <p class="section-sub">These are source comments, not verified buyers. Location, budget and product fit may be unknown.</p>
+    <div id="preview-video-card"></div>
+    <div id="preview-leads-list" class="comment-list" aria-live="polite"></div>
+    <div class="result-callout"><div><h3>Want to find the right fit for your product?</h3><p>Product matching and reply drafts are coming next.</p></div><button class="btn-brown" data-waitlist="matched-leads">Notify me at launch ↗</button></div>
   </section>
-</div>
 
-<!-- =========================================================
-     SCREEN 2: FREE SEARCH RESULTS (NO LOGIN)
-     ========================================================= -->
-<div id="screen-preview" class="preview-container" hidden>
-  <div class="top-back-bar">
-    <button class="back-btn" onclick="showScreen('landing')">←</button>
-    <div class="brand-logo" onclick="showScreen('landing')">
-      <span class="brand-icon">▶</span>
-      <span>Comment <span class="brand-arrow">→</span> Money</span>
+  <section class="how-it-works" aria-label="How the free preview works">
+    <div><span class="step">01</span><h3>Start with a conversation</h3><p>Paste a YouTube link or search a topic related to your business.</p></div>
+    <div><span class="step">02</span><h3>Read the actual comments</h3><p>See a small preview, then open the original source for context.</p></div>
+    <div><span class="step">03</span><h3>Use your own judgment</h3><p>Decide whether a helpful, relevant conversation makes sense.</p></div>
+  </section>
+
+  <section id="coming-next" class="coming-next" aria-labelledby="coming-title">
+    <div class="section-heading"><div><p class="eyebrow">BUILDING WHAT COMES NEXT</p><h2 id="coming-title">A little preview today.<br>A better lead finder tomorrow.</h2></div><p class="section-sub">The free preview is open.<br>Everything below is waitlist-only.</p></div>
+    <div class="feature-grid">
+      <article class="feature-card"><span class="feature-icon" aria-hidden="true">◎</span><span class="coming-badge">COMING SOON</span><h3>Matches for your product</h3><p>Find comments that match what you sell, with the evidence and unknowns explained.</p><button class="text-button" data-waitlist="matched-leads">Join the waitlist <span aria-hidden="true">↗</span></button></article>
+      <article class="feature-card"><span class="feature-icon" aria-hidden="true">✎</span><span class="coming-badge">COMING SOON</span><h3>A thoughtful first reply</h3><p>Get a draft grounded in the customer's words and your actual product features.</p><button class="text-button" data-waitlist="reply-drafts">Join the waitlist <span aria-hidden="true">↗</span></button></article>
+      <article class="feature-card"><span class="feature-icon" aria-hidden="true">▤</span><span class="coming-badge">COMING SOON</span><h3>Save the conversations</h3><p>Keep useful matches together and track what happens after you reach out.</p><button class="text-button" data-waitlist="saved-leads">Join the waitlist <span aria-hidden="true">↗</span></button></article>
+      <article class="feature-card"><span class="feature-icon" aria-hidden="true">↻</span><span class="coming-badge">COMING SOON</span><h3>Let discovery come to you</h3><p>Get fresh searches for your products without starting from scratch each time.</p><button class="text-button" data-waitlist="automated-search">Join the waitlist <span aria-hidden="true">↗</span></button></article>
     </div>
+    <div class="launch-note"><span>No paid plans are available yet.</span><button class="text-button" data-waitlist="full-product">Be first to hear about launch →</button></div>
+  </section>
+</main>
+<footer class="wrap footer"><a class="brand" href="#">Comment <span class="brand-arrow">→</span> Money</a><p>Source first. Helpful conversations next.</p><div><a href="/privacy" target="_blank" rel="noopener">Privacy</a><a href="/terms" target="_blank" rel="noopener">Terms</a></div></footer>
+
+<dialog id="waitlist-dialog" aria-labelledby="waitlist-title" aria-describedby="waitlist-description">
+  <button type="button" class="dialog-close" id="waitlist-close" aria-label="Close waitlist">×</button>
+  <div id="waitlist-form-panel">
+    <span class="coming-badge">EARLY ACCESS WAITLIST</span>
+    <h2 id="waitlist-title">A better way to find your people.</h2>
+    <p id="waitlist-description">Leave your email. We'll let you know when this is ready.</p>
+    <form id="waitlist-form">
+      <input id="waitlist-interest" type="hidden" value="full-product">
+      <label class="field-label" for="waitlist-name">Name <span class="optional">(optional)</span></label><input class="field-input" id="waitlist-name" name="name" autocomplete="name" maxlength="100" placeholder="What should we call you?">
+      <label class="field-label" for="waitlist-email">Email</label><input class="field-input" id="waitlist-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+      <div class="honeypot" aria-hidden="true"><label for="waitlist-website">Leave this blank</label><input id="waitlist-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <label class="consent"><input id="waitlist-consent" type="checkbox" required><span>Email me when this launches. I have read the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+      <p id="waitlist-error" class="form-message error" role="alert"></p>
+      <button id="waitlist-submit" class="btn-brown full-width" type="submit">Join the waitlist ↗</button>
+      <p class="dialog-footnote">No account. No password. No payment.</p>
+    </form>
   </div>
-
-  <div class="hero-search-box" style="max-width:100%;margin-bottom:24px">
-    <span class="yt-badge">▶</span>
-    <input id="preview-query" placeholder="Search YouTube video, channel or keyword..." onkeydown="if(event.key==='Enter')runFreePreview($('#preview-query').value)">
-    <button class="btn-brown" onclick="runFreePreview($('#preview-query').value)">Search</button>
-  </div>
-
-  <h2 class="serif" id="preview-heading" style="font-size:30px;margin:0 0 4px">Preview real public comments</h2>
-  <p style="color:var(--mute);margin:0 0 16px">These are real comments from YouTube. Sign up to save them and get more results.</p>
-
-  <div id="preview-video-card" class="video-banner"></div>
-  <div id="preview-leads-list"></div>
-
-  <div class="unlock-callout">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div class="trust-icon" style="background:#EAD3BC">🔒</div>
-      <div>
-        <div style="font-weight:800;font-size:16px">Try your product with up to 30 matched opportunities</div>
-        <div style="font-size:13px;color:var(--mute)">Save leads, get advanced filters and create reports.</div>
-      </div>
-    </div>
-    <button class="btn-brown" onclick="openAuthScreen('register')">Create Free Account →</button>
-  </div>
-</div>
-
-<!-- =========================================================
-     SCREEN 3: SIGN UP / LOG IN (FREE ACCOUNT)
-     ========================================================= -->
-<div id="screen-auth" class="auth-page-wrap" hidden>
-  <div class="top-back-bar">
-    <button class="back-btn" onclick="showScreen('landing')">←</button>
-    <div class="brand-logo" onclick="showScreen('landing')">
-      <span class="brand-icon">▶</span>
-      <span>Comment <span class="brand-arrow">→</span> Money</span>
-    </div>
-  </div>
-
-  <div class="auth-card">
-    <h2 class="serif" id="auth-title" style="font-size:28px;margin:0 0 6px;text-align:center">Create your free account</h2>
-    <p id="auth-sub" style="color:var(--mute);font-size:13.5px;text-align:center;margin:0 0 18px">Save leads, get more searches and unlock advanced features.</p>
-
-    <button class="social-btn" onclick="sendMagicLinkUI()">
-      <span>✉</span> Email me a login link
-    </button>
-
-    <div class="or-divider">or sign in with password</div>
-
-    <div id="auth-name-wrap">
-      <label class="field-label">Full name</label>
-      <input id="auth-name" class="field-input" placeholder="Enter your full name">
-    </div>
-    <label class="field-label">Email</label>
-    <input id="auth-email" type="email" class="field-input" placeholder="guna@example.com">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 5px">
-      <label class="field-label" style="margin:0">Password</label>
-      <a href="#" onclick="sendPasswordResetUI();return false" style="font-size:12px;color:var(--brown);font-weight:700">Forgot password?</a>
-    </div>
-    <div style="position:relative">
-      <input id="auth-pwd" type="password" class="field-input" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')submitAuthForm()">
-      <button type="button" onclick="const p=$('#auth-pwd');p.type=p.type==='password'?'text':'password'" style="position:absolute;right:10px;top:9px;border:0;background:none;color:var(--mute)">👁</button>
-    </div>
-
-    <div id="auth-err" style="color:var(--rose);font-size:13px;font-weight:600;min-height:20px;margin-top:8px"></div>
-    <div id="auth-ok" style="color:var(--green);font-size:13px;font-weight:700;margin-top:4px"></div>
-
-    <button class="btn-brown" id="auth-submit-btn" style="width:100%;margin-top:10px;padding:12px" onclick="submitAuthForm()">Create Account →</button>
-    <div style="text-align:center;margin-top:8px">
-      <a href="#" onclick="resendConfirmationUI();return false" style="font-size:12px;color:var(--mute);text-decoration:underline">Didn't get confirmation email? Resend via Supabase</a>
-    </div>
-
-    <p style="font-size:12px;color:var(--mute);text-align:center;margin:14px 0 0">
-      <label><input id="auth-policy" type="checkbox"> I agree to the <a href="/terms" target="_blank">Terms</a> and have read the <a href="/privacy" target="_blank">Privacy Policy</a>.</label>
-    </p>
-    <div style="text-align:center;margin-top:12px;font-size:13px">
-      <a href="#" id="auth-toggle-link" style="color:var(--brown);font-weight:700" onclick="toggleAuthMode();return false">Already have an account? Log in</a>
-    </div>
-  </div>
-</div>
-
-<!-- =========================================================
-     SCREEN 4: PRICING PAGE
-     ========================================================= -->
-<div id="screen-pricing" class="pricing-wrap" hidden>
-  <div class="top-back-bar" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button class="back-btn" onclick="openAppDashboard()">←</button>
-      <div class="brand-logo" onclick="showScreen('landing')">
-        <span class="brand-icon">▶</span>
-        <span>Comment <span class="brand-arrow">→</span> Money</span>
-      </div>
-    </div>
-    <button class="btn-outline" onclick="openAppDashboard()">Go to Dashboard →</button>
-  </div>
-
-  <h1 class="serif" style="font-size:40px;margin:10px 0 8px">Simple and transparent pricing</h1>
-  <p style="color:var(--mute);font-size:15.5px;margin:0">Start free. Upgrade anytime as you grow.</p>
-
-  <div id="pricing-cards" class="pricing-grid"><p>Loading the current offers…</p></div>
-  <p style="color:var(--mute);font-size:13px;margin-top:24px">Matched opportunities are not verified buyers or guaranteed sales. Each tier also has a comment-analysis allowance. Paid allowances renew per successful billing period; the trial is one time. <a href="/terms" target="_blank">Terms</a> · <a href="/privacy" target="_blank">Privacy</a> · <a href="/refunds" target="_blank">Refund policy</a></p>
-
-</div>
-
-<!-- =========================================================
-     SCREENS 5 & 6: LOGGED-IN APP SHELL (DASHBOARD & LEAD FINDER)
-     ========================================================= -->
-<div id="screen-app" class="app-shell" hidden>
-  <!-- Left Sidebar -->
-  <aside class="sidebar">
-    <div>
-      <div class="brand-logo" style="padding:4px 8px" onclick="switchAppView('dashboard')">
-        <span class="brand-icon">▶</span>
-        <span>Comment <span class="brand-arrow">→</span> Money</span>
-      </div>
-
-      <nav class="side-nav">
-        <button class="side-btn active" id="nav-dashboard" onclick="switchAppView('dashboard')">🏠 <span>Dashboard</span></button>
-        <button class="side-btn" id="nav-finder" onclick="switchAppView('finder')">🔍 <span>Lead Finder</span></button>
-        <button class="side-btn" id="nav-reports" onclick="switchAppView('reports')">📄 <span>Creator Reports</span></button>
-        <button class="side-btn" id="nav-saved" onclick="openFilteredLeads('replied')">🔖 <span>Saved / Replied</span></button>
-        <button class="side-btn" id="nav-history" onclick="openFilteredLeads('all')">🕒 <span>History</span></button>
-        <button class="side-btn" id="nav-workspaces" onclick="switchAppView('workspaces')">📁 <span>Workspaces</span></button>
-        <button class="side-btn" id="nav-settings" onclick="switchAppView('settings')">⚙ <span>Settings</span></button>
-      </nav>
-    </div>
-
-    <div>
-      <div class="side-ws-box">
-        <div class="side-ws-label">🔒 Active Product</div>
-        <select id="ws" class="side-ws-select" onchange="onWsChange()"></select>
-        <div id="ws-sub" style="font-size:11.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-      </div>
-      <button class="btn-outline" style="width:100%;margin-bottom:6px;font-size:12.5px;padding:7px" onclick="newProduct(false)">+ New Product Setup</button>
-      <button class="btn-outline" style="width:100%;background:var(--bg-peach);border-color:#E5CEB5;color:var(--brown);font-weight:700" onclick="showScreen('pricing')">⬆ Upgrade Plan</button>
-    </div>
-  </aside>
-
-  <!-- Main Content Area -->
-  <div class="main-area">
-    <header class="topbar">
-      <div class="topbar-search">
-        <span style="color:var(--mute)">🔍</span>
-        <input id="global-search" placeholder="Search videos, channels or keywords..." onkeydown="if(event.key==='Enter'){switchAppView('finder');$('#finder-kw').value=this.value;auto()}">
-        <span class="kbd-tag">Ctrl K</span>
-      </div>
-      <div class="topbar-user">
-        <button class="btn-outline" style="padding:6px 11px;font-size:12px" onclick="showScreen('landing')" title="Preview Landing Page">🌐 Landing Page</button>
-        <span style="font-size:17px;cursor:pointer" title="Alerts active" onclick="switchAppView('settings')">🔔</span>
-        <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="openAuthScreen('login')">
-          <div class="avatar" id="user-avatar" style="width:30px;height:30px;font-size:13px">G</div>
-          <span id="user-badge" style="font-weight:700;font-size:13.5px">Guna Shekar</span>
-          <span style="color:var(--mute);font-size:11px">⌄</span>
-        </div>
-        <button id="logout-btn" class="btn-outline" style="padding:5px 10px;font-size:12px" onclick="logout()" hidden>Log out</button>
-      </div>
-    </header>
-
-    <main class="main-content">
-      <div id="policy-consent" class="finder-card" style="margin-bottom:18px">
-        <label><input id="account-policy" type="checkbox"> I agree to the <a href="/terms" target="_blank">Terms</a> and have read the <a href="/privacy" target="_blank">Privacy Policy</a>, including YouTube data use and AI processing.</label>
-        <button class="btn-outline" onclick="acceptPolicies()">Accept and continue</button><span id="policy-message" role="status"></span>
-      </div>
-      <!-- Status Banner shared across views -->
-      <div id="st"></div>
-
-      <!-- =================================================
-           VIEW 5: DASHBOARD (AFTER LOGIN)
-           ================================================= -->
-      <section id="view-dashboard">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
-          <div>
-            <h1 class="serif" id="dash-greeting" style="font-size:32px;margin:0 0 4px">Good morning, Guna 👋</h1>
-            <p style="color:var(--mute);margin:0">Find new leads, create reports and grow your business.</p>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-outline" onclick="editProduct()">✏ Edit <span id="dash-pname-btn">Product</span></button>
-            <button class="btn-brown" onclick="switchAppView('finder');auto()">Find New Leads →</button>
-          </div>
-        </div>
-
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-icon">🔍</div>
-            <div>
-              <div class="kpi-val" id="kpi-searches">0</div>
-              <div class="kpi-sub" id="kpi-searches-sub">Searches used (Unlimited)</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon">👥</div>
-            <div>
-              <div class="kpi-val" id="kpi-leads">0</div>
-              <div class="kpi-sub">Leads found for this product</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon">📄</div>
-            <div>
-              <div class="kpi-val" id="kpi-strong">0</div>
-              <div class="kpi-sub">Strong matches (score 80–100)</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon">📊</div>
-            <div>
-              <div class="kpi-val" id="kpi-intent">—</div>
-              <div class="kpi-sub">Share scoring 80+ (AI estimate)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sub-tabs">
-          <div class="sub-tab-list">
-            <button class="sub-tab-btn active" id="dtab-leads" onclick="switchDashTab('leads')">Recent Leads</button>
-            <button class="sub-tab-btn" id="dtab-reports" onclick="switchDashTab('reports')">Creator Reports</button>
-          </div>
-          <a href="#" style="color:var(--brown);font-weight:700;font-size:13.5px" onclick="switchAppView('finder');return false">View all leads & filters →</a>
-        </div>
-
-        <div class="leads-table-card">
-          <table class="leads-table">
-            <thead>
-              <tr>
-                <th>Comment</th>
-                <th>Video / Channel (YouTube Links)</th>
-                <th>Intent</th>
-                <th>Suggested Reply</th>
-                <th>Match</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="dash-table-body">
-              <tr><td colspan="6" style="text-align:center;color:var(--mute);padding:28px">Loading leads…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- =================================================
-           VIEW 6: LEAD FINDER (LOGGED IN)
-           ================================================= -->
-      <section id="view-finder" hidden>
-        <h1 class="serif" style="font-size:32px;margin:0 0 4px">Find new leads</h1>
-        <p style="color:var(--mute);margin:0 0 18px">Search by keywords or paste YouTube links. We'll find people who need what you sell.</p>
-
-        <div class="sub-tabs">
-          <div class="sub-tab-list">
-            <button class="sub-tab-btn active" id="ftab-kw" onclick="switchFinderMode('kw')">Search by keywords (AI Auto-Search)</button>
-            <button class="sub-tab-btn" id="ftab-url" onclick="switchFinderMode('url')">Scan specific videos / @channels</button>
-          </div>
-        </div>
-
-        <!-- Mode A: Search by Keywords / AI Profile -->
-        <div id="finder-kw-pane">
-          <div class="hero-search-box" style="max-width:100%">
-            <span class="yt-badge">▶</span>
-            <input id="finder-kw" placeholder="Enter keywords (e.g. best elderly care app, parent tracker) or leave blank to use your saved AI profile...">
-            <button class="btn-brown" id="findbtn" onclick="auto()">Search</button>
-          </div>
-          <div style="margin-top:8px;font-size:12.5px;color:var(--mute)">
-            Active Profile: <b id=" pname-inline" style="color:var(--ink)"></b> — <span id="ppitch"></span>
-          </div>
-        </div>
-
-        <!-- Mode B: Scan Specific Videos -->
-        <div id="finder-url-pane" hidden>
-          <div class="finder-card" style="margin-top:0">
-            <label class="field-label" style="margin-top:0">Paste YouTube video or @channel links (one per line)</label>
-            <textarea id="urls" class="field-input" rows="3" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/@channel"></textarea>
-            <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
-              <span style="font-size:13px;color:var(--mute)">Comments per video:</span>
-              <input id="pv" type="number" class="field-input" value="80" style="width:90px">
-              <button class="btn-brown" onclick="scan()">Scan these links →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Search Settings Card -->
-        <div class="finder-card">
-          <div style="font-weight:800;font-size:15px;margin-bottom:12px">Search settings</div>
-          <div class="settings-grid">
-            <div>
-              <label class="field-label" style="margin-top:0" for="level">Show matches</label>
-              <select id="level" class="field-input" onchange="loadLeads()">
-                <option value="80">Strong only (score 80–100)</option>
-                <option value="60" selected>Strong + Possible (score 60+)</option>
-                <option value="40">Everything incl. broad (score 40+)</option>
-              </select>
-            </div>
-            <div>
-              <label class="field-label" style="margin-top:0" for="status-filter">Which leads</label>
-              <select id="status-filter" class="field-input" onchange="loadLeads()">
-                <option value="new">To reply</option>
-                <option value="replied">Already replied</option>
-                <option value="contacted">Contacted</option><option value="responded">Responded</option><option value="qualified">Qualified</option><option value="purchased">Purchased</option><option value="irrelevant">Irrelevant</option><option value="ignored">Skipped</option>
-                <option value="all">All</option>
-              </select>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px">
-            <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer">
-              <input type="checkbox" id="show-bad" onchange="loadLeads()" style="width:16px;height:16px">
-              Also show leads I marked "not real"
-            </label>
-            <button class="btn-outline" style="padding:6px 12px;font-size:12.5px" onclick="exportCsv()">⬇ Download CSV</button>
-          </div>
-          <details style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
-            <summary style="cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink-soft)">⚙ Advanced filters & Blocklist</summary>
-            <div style="margin-top:10px">
-              <label class="field-label" style="margin-top:0">Blocklist (authors or words to hide, comma separated)</label>
-              <textarea id="bl" class="field-input" rows="2" placeholder="@spambot, giveaway, free promo"></textarea>
-              <div style="margin-top:8px"><button class="btn-outline" onclick="saveBlocklist()">Save blocklist</button> <span id="bl-msg" style="color:var(--green);font-weight:700;font-size:13px"></span></div>
-            </div>
-          </details>
-        </div>
-
-        <!-- Auto-search Pro Banner -->
-        <div class="pro-auto-banner">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="trust-icon" style="width:36px;height:36px;background:#EAD3BC;font-size:16px">🕒</div>
-            <div>
-              <div style="font-weight:800;font-size:14px">Auto-search (Boost feature)</div>
-              <div style="font-size:12.5px;color:var(--mute)">Boost can schedule a weekly search within your monthly allowance.</div>
-            </div>
-          </div>
-          <button type="button" id="auto-toggle-btn" class="toggle-switch on" onclick="triggerScheduledNow()" title="Click to trigger automated search across all products"></button>
-        </div>
-
-        <div id="planbar" class="status-box run" hidden></div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;flex-wrap:wrap;gap:8px">
-          <div id="lead-count" style="font-weight:800;font-size:17px"></div>
-          <span style="font-size:12.5px;color:var(--mute)">Click <b>Open on YouTube ↗</b> to open the video with that exact comment pinned at the top.</span>
-        </div>
-
-        <div id="pilot-metrics" class="finder-card" style="margin:12px 0" hidden></div>
-        <div id="leads"></div>
-      </section>
-
-      <!-- =================================================
-           VIEW: CREATOR REPORTS
-           ================================================= -->
-      <section id="view-reports" hidden>
-        <h1 class="serif" style="font-size:32px;margin:0 0 4px">Creator Reports</h1>
-        <p style="color:var(--mute);margin:0 0 18px">Paste any YouTube creator's channel to discover what their audience wants to buy, product ideas in ₹, and a ready-to-send Cold DM.</p>
-        <div class="finder-card" style="margin-top:0">
-          <div class="hero-search-box" style="max-width:100%">
-            <span class="yt-badge">▶</span>
-            <input id="ch" placeholder="https://www.youtube.com/@channel">
-            <button class="btn-brown" onclick="report()">Generate Report →</button>
-          </div>
-          <div id="rs" style="font-size:13px;color:var(--mute);margin-top:8px"></div>
-        </div>
-        <div id="rep" style="margin-top:18px"></div>
-      </section>
-
-      <!-- =================================================
-           VIEW: WORKSPACES & 1-QUESTION-AT-A-TIME SETUP WIZARD
-           ================================================= -->
-      <section id="view-workspaces" hidden>
-        <div class="wiz-card">
-          <div class="wiz-prog" id="prog"></div>
-          <div id="wizbody"></div>
-        </div>
-      </section>
-
-      <!-- =================================================
-           VIEW: SETTINGS & QUOTA + SUPABASE CLOUD
-           ================================================= -->
-      <section id="view-settings" hidden>
-        <div class="finder-card" style="margin-bottom:18px"><h2>Billing and account</h2>
-          <p>Your plan renews only through successful provider billing. <a href="/refunds" target="_blank">Refund policy and support</a>.</p>
-          <button class="btn-outline" onclick="cancelSubscription()">Cancel subscription renewal</button><span id="billing-message" role="status"></span>
-          <details style="margin-top:18px"><summary>Delete my account and stored data</summary>
-            <p>This requests deletion of your account, product profiles, saved comments and outcome records. It does not delete anything from YouTube. Active renewal is cancelled first. This cannot be undone once processed.</p>
-            <input id="delete-confirmation" class="field-input" placeholder="Type DELETE MY ACCOUNT"><button class="btn-outline" onclick="deleteMyAccount()">Request account deletion</button><span id="delete-message" role="status"></span>
-          </details></div>
-        <div class="finder-card"><h2>Account and privacy</h2><p>Authentication and email verification are managed securely by Supabase. Product data is saved through the app API.</p><p><a href="/privacy" target="_blank">Privacy policy</a> · <a href="/terms" target="_blank">Terms</a></p></div>
-      </section>
-    </main>
-  </div>
-</div>
-
-<!-- Screen 7: Mobile Sticky Bottom Navigation -->
-<nav class="mobile-bottom-nav" id="mob-nav" hidden>
-  <button class="mob-nav-btn active" id="mnav-dashboard" onclick="openAppDashboard();switchAppView('dashboard')"><span>🏠</span><span>Home</span></button>
-  <button class="mob-nav-btn" id="mnav-finder" onclick="openAppDashboard();switchAppView('finder')"><span>🔍</span><span>Search</span></button>
-  <button class="mob-nav-btn" id="mnav-reports" onclick="openAppDashboard();switchAppView('reports')"><span>📄</span><span>Reports</span></button>
-  <button class="mob-nav-btn" id="mnav-saved" onclick="openAppDashboard();openFilteredLeads('replied')"><span>🔖</span><span>Saved</span></button>
-</nav>
-
-<script src="/config.js"></script>
-<script src="/assets/api.js"></script>
-<script src="/assets/auth.js"></script>
-<script src="/assets/app.js"></script>
+  <div id="waitlist-success" class="success-panel" role="status" hidden><span class="success-icon" aria-hidden="true">✓</span><h2>You're on the list.</h2><p>Thanks for being here early. We'll email you when this is ready.</p><button class="btn-brown full-width" type="button" id="waitlist-done">Back to exploring</button></div>
+</dialog>
+<script src="/config.js"></script><script src="/assets/api.js"></script><script src="/assets/app.js"></script>
 </body>
 </html>

@@ -15,7 +15,10 @@ JSON_COLUMNS={('workspaces','profile'),('workspaces','pilot_feedback'),('leads',
 
 def apply_schema():
     connection=database.connect()
-    try:connection.connection.execute(MIGRATION.read_text(encoding='utf8'));connection.commit()
+    try:
+        for migration in sorted((ROOT/'supabase/migrations').glob('*.sql')):
+            connection.connection.execute(migration.read_text(encoding='utf8'))
+        connection.commit()
     finally:connection.close()
 
 

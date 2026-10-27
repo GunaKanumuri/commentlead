@@ -25,13 +25,13 @@ def test_setup_failure_keeps_public_assets_available_and_blocks_private_api(monk
     with patch.object(runtime,'get_db',side_effect=AssertionError('Private storage must not be accessed')):
         assert client.get('/').status_code==200
         assert client.get('/assets/styles.css').status_code==200
-        assert client.get('/assets/auth.js').status_code==200
+        assert client.get('/assets/app.js').status_code==200
         assert client.get('/api/auth/config').status_code==200
         assert client.get('/api/pricing').status_code==200
         response=client.get('/api/workspaces')
         assert response.status_code==503
         assert 'Private configuration detail' not in response.text
-        assert client.post('/api/free-preview',json={'query':'test'}).status_code==503
+        assert client.post('/api/scan',json={'workspace_id':1,'urls':[]}).status_code==503
         assert client.get('/api/health').status_code==503
 
 

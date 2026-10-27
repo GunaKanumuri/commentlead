@@ -1,54 +1,27 @@
-const test=require('node:test');
-const assert=require('node:assert/strict');
-const vm=require('node:vm');
-const fs=require('node:fs');
-function context(){
-  const nodes=new Map();
-  const node=selector=>{if(!nodes.has(selector))nodes.set(selector,{value:'',textContent:'',hidden:false,checked:false});return nodes.get(selector);};
-  const scope=vm.createContext({window:{APP_CONFIG:{apiBaseUrl:'https://api.example.test'},location:{origin:'https://frontend.example.test'}},
-    document:{querySelector:node,querySelectorAll:()=>[]},localStorage:{getItem:()=> 'old-local-token',removeItem:()=>{}},
-    queueMicrotask,console,fetch:async()=>({ok:true,json:async()=>({})})});
-  vm.runInContext(fs.readFileSync('frontend/assets/api.js','utf8'),scope);
-  vm.runInContext(fs.readFileSync('frontend/assets/auth.js','utf8'),scope);
-  return {scope,node};
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+function setup(){
+ const nodes=new Map();const node=s=>{if(!nodes.has(s))nodes.set(s,{value:'',checked:false,hidden:false,textContent:'',innerHTML:'',addEventListener(){},focus(){},reset(){},showModal(){this.open=true;},close(){this.open=false;}});return nodes.get(s);};
+ const scope=vm.createContext({window:{APP_CONFIG:{apiBaseUrl:'https://api.example.test'},location:{search:'?utm_source=reddit'}},URL,URLSearchParams,console,document:{querySelector:node,querySelectorAll:()=>[],addEventListener(){},body:{classList:{add(){},remove(){}}}},fetch:async()=>({ok:true,json:async()=>({ok:true})})});
+ for(const file of ['api.js','app.js'])vm.runInContext(fs.readFileSync('frontend/assets/'+file,'utf8'),scope);
+ return {scope,node};
 }
-test('API targets configured backend and never uses an old custom login token',async()=>{
-  const {scope}=context();let request;
-  scope.fetch=async(url,options)=>{request={url,options};return {ok:true,json:async()=>({ok:true})};};
-  await vm.runInContext("api('pricing')",scope);
-  assert.equal(request.url,'https://api.example.test/api/pricing');assert.equal(request.options.credentials,'include');
-  assert.equal(request.options.headers.Authorization,undefined);
-  scope.window.CM_ACCESS_TOKEN='supabase-session';await vm.runInContext("api('workspaces')",scope);
-  assert.equal(request.options.headers.Authorization,'Bearer supabase-session');
+test('public requests use API without authentication',async()=>{
+ const {scope}=setup();let request;scope.fetch=async(url,options)=>{request={url,options};return {ok:true,json:async()=>({ok:true})};};
+ await vm.runInContext("api('pricing')",scope);assert.equal(request.url,'https://api.example.test/api/pricing');assert.equal(request.options.headers.Authorization,undefined);
 });
-test('Supabase session refresh updates the bearer token and signout clears it',async()=>{
-  const {scope}=context();let callback;
-  scope.fetch=async()=>({ok:true,json:async()=>({supabase_enabled:true,supabase_url:'https://project.supabase.co',supabase_anon_key:'public-key'})});
-  scope.window.supabase={createClient:(url,key)=>{
-    assert.equal(key,'public-key');return {auth:{onAuthStateChange:fn=>{callback=fn;},getSession:async()=>({data:{session:null}})}};
-  }};
-  await vm.runInContext('initSupabaseClient()',scope);
-  callback('TOKEN_REFRESHED',{access_token:'refreshed-supabase-token'});
-  assert.equal(scope.window.CM_ACCESS_TOKEN,'refreshed-supabase-token');
-  vm.runInContext('function showScreen(){}',scope);callback('SIGNED_OUT',null);
-  assert.equal(scope.window.CM_ACCESS_TOKEN,'');
+test('waitlist requires consent then saves launch details',async()=>{
+ const {scope,node}=setup();let body,calls=0;scope.fetch=async(url,options)=>{calls++;body=JSON.parse(options.body);return {ok:true,json:async()=>({ok:true})};};
+ vm.runInContext("openWaitlist('matched-leads')",scope);node('#waitlist-email').value='founder@example.test';
+ await vm.runInContext('submitWaitlist()',scope);assert.equal(calls,0);
+ node('#waitlist-consent').checked=true;await vm.runInContext('submitWaitlist()',scope);
+ assert.equal(body.source,'reddit');assert.equal(body.interest,'matched-leads');assert.equal(body.consent,true);assert.equal(node('#waitlist-success').hidden,false);
 });
-test('Signup requires policy acceptance and keeps password handling in Supabase',async()=>{
-  const {scope,node}=context();let signup;
-  node('#auth-email').value='test@example.test';node('#auth-pwd').value='test-password';node('#auth-name').value='Test';
-  scope.client={auth:{signUp:async body=>{signup=body;return {data:{session:null}};}}};
-  vm.runInContext('sbClient=client;',scope);
-  await vm.runInContext('submitAuthForm()',scope);assert.equal(signup,undefined);
-  node('#auth-policy').checked=true;await vm.runInContext('submitAuthForm()',scope);
-  assert.equal(signup.email,'test@example.test');assert.equal(signup.options.emailRedirectTo,'https://frontend.example.test');
-  assert.match(node('#auth-ok').textContent,/confirm your account/);
+test('storage failure never claims success',async()=>{
+ const {scope,node}=setup();vm.runInContext('openWaitlist()',scope);node('#waitlist-email').value='founder@example.test';node('#waitlist-consent').checked=true;
+ scope.fetch=async()=>({ok:false,status:503,json:async()=>({detail:'private database error'})});await vm.runInContext('submitWaitlist()',scope);
+ assert.equal(node('#waitlist-success').hidden,true);assert.match(node('#waitlist-error').textContent,/temporarily unavailable/);assert.equal(node('#waitlist-submit').disabled,false);
 });
-test('Signout clears the active Supabase token only after successful signout',async()=>{
-  const {scope}=context();scope.window.CM_ACCESS_TOKEN='active-session';
-  vm.runInContext('let workspacesList=[];function showScreen(){}',scope);
-  scope.client={auth:{signOut:async()=>({error:new Error('Try again')})}};
-  vm.runInContext('sbClient=client;',scope);await vm.runInContext('logout()',scope);
-  assert.equal(scope.window.CM_ACCESS_TOKEN,'active-session');
-  scope.client.auth.signOut=async()=>({error:null});await vm.runInContext('logout()',scope);
-  assert.equal(scope.window.CM_ACCESS_TOKEN,'');
+test('comments escaped and links restricted',()=>{
+ const {scope,node}=setup();vm.runInContext(`renderPreview({leads:[{text:'<script>bad</script>',link:'javascript:alert(1)'}]})`,scope);
+ assert.match(node('#preview-leads-list').innerHTML,/&lt;script&gt;/);assert.doesNotMatch(node('#preview-leads-list').innerHTML,/javascript:/);
 });

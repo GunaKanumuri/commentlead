@@ -2,10 +2,16 @@
 
 A small customer-discovery app: add a product, find source-backed matches, and track conversations.
 
+The current public launch offers a free YouTube comment preview and a simple email waitlist.
+There is no public signup, password, account dashboard or checkout. Upcoming features open
+the waitlist dialog. Set `PUBLIC_LAUNCH_MODE=waitlist` (the default) to keep private routes closed.
+Waitlist entries are stored in the private Supabase `waitlist` table with consent and referral
+source; duplicate emails do not create additional entries. No email is sent on submission.
+
 ## Project layout
 
 ```text
-frontend/               HTML, CSS, JavaScript, Supabase login, API client
+frontend/               Public preview, waitlist dialog and API client
 backend/                Python API and focused services
   main.py               HTTP entry point
   auth.py               Verify Supabase sessions and provision profiles
@@ -27,13 +33,14 @@ docs/                   Setup, architecture, pilot and launch notes
 3. Verify the database: `python -m scripts.manage_database --check`.
 4. For a new database, apply the schema: `python -m scripts.manage_database --apply`.
 5. Start the API: `uvicorn backend.main:app --reload --port 8000`.
-6. Start one worker: `python -m backend.worker`.
+6. A worker is only needed when restoring the full product; the public preview runs directly.
 7. Start the frontend: `python -m scripts.dev_frontend` and open `http://localhost:3000`.
 
 Use `FRONTEND_URL=http://localhost:3000` and allow that exact origin in `ALLOWED_ORIGINS`.
 The frontend does not receive database, Supabase secret, YouTube or Gemini credentials.
 
-Supabase Auth manages signup, login, email confirmation, password recovery and session refresh.
+Supabase Auth integration remains in the backend for the later full-product launch.
+The current public frontend does not load an authentication SDK or create accounts.
 All product data goes through the Python API into Supabase Postgres. There is no application
 SQLite fallback or two-way data mirror. SQLite exists only in explicitly isolated legacy tests.
 
@@ -48,9 +55,8 @@ See [setup](docs/SETUP.md), [architecture](docs/ARCHITECTURE.md), and [release c
 
 ## Next phases
 
-1. Complete and verify the live Supabase schema/data migration.
-2. Vercel frontend deployment and backend/worker hosting.
-3. Supabase email delivery configuration.
-4. Payments and a controlled pilot.
+1. Configure server environment variables in Vercel and verify the public preview and waitlist.
+2. Review the first real comments and collect waitlist demand.
+3. Restore accounts, email delivery and paid features after validating demand.
 
 These steps are not deployed or activated by the code split. Paid checkout remains gated.

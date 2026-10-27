@@ -58,6 +58,7 @@ def init_db():
     if legacy and core.verify_password(legacy['password_hash'], 'demo1234'):
         conn.execute('UPDATE users SET password_hash=? WHERE id=1', (core.hash_password(core.secrets.token_urlsafe(48)),))
     core.commerce.schema(conn)
+    conn.execute("CREATE TABLE IF NOT EXISTS waitlist(email TEXT PRIMARY KEY,name TEXT NOT NULL DEFAULT '',interest TEXT NOT NULL DEFAULT 'full-product',source TEXT NOT NULL DEFAULT 'website',policy_version TEXT NOT NULL,consented_at TEXT NOT NULL,created_at TEXT NOT NULL)")
     conn.execute("UPDATE analysis_credits SET status='failed' WHERE status='reserved'")
     conn.execute("UPDATE jobs SET status='interrupted', error='Server restarted while job was running' WHERE status='running'")
     conn.execute("UPDATE jobs SET status='queued',error='',msg='Resuming saved request after restart' WHERE status='interrupted' AND payload!=''")

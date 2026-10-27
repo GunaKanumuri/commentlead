@@ -7,9 +7,16 @@ def get_db():
 
 @core.app.middleware('http')
 async def add_security_headers(request: core.Request, call_next):
+    public_paths={'/api/health','/api/auth/config','/api/pricing','/api/free-preview','/api/legal/accept-public','/api/waitlist'}
+    if (core.waitlist_mode() and request.url.path.startswith('/api/')
+            and request.url.path not in public_paths
+            and request.url.path not in {'/api/account/delete','/api/billing/webhook'}
+            and not request.url.path.startswith('/api/admin/')):
+        from fastapi.responses import JSONResponse
+        return JSONResponse({'detail':'This feature is coming soon. Join the waitlist for launch updates.'},status_code=403)
     if (getattr(core.app.state,'startup_error',None)
             and request.url.path.startswith('/api/')
-            and request.url.path not in {'/api/health','/api/auth/config','/api/pricing'}):
+            and request.url.path not in {'/api/health','/api/auth/config','/api/pricing','/api/waitlist','/api/free-preview','/api/legal/accept-public'}):
         from fastapi.responses import JSONResponse
         return JSONResponse({'detail':'Application setup is incomplete. Please contact support.'},status_code=503)
     try:
@@ -17,6 +24,9 @@ async def add_security_headers(request: core.Request, call_next):
     except core.HTTPException as exc:
         from fastapi.responses import JSONResponse
         return JSONResponse({'detail': exc.detail}, status_code=exc.status_code)
+    except (RuntimeError,DatabaseError):
+        from fastapi.responses import JSONResponse
+        return JSONResponse({'detail':'This service is temporarily unavailable. Please try again later.'},status_code=503)
     token = core._API_CONTEXT.set({})
     try:
         response = await call_next(request)

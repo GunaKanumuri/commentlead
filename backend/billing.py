@@ -47,6 +47,9 @@ def install(runtime):
 
     @app.get('/api/pricing')
     def pricing():
+        if core.R['waitlist_mode']():
+            return {'plans':[{'key':'free','label':'Free preview','price_minor':0,'comments':5,'account_required':False}],
+                    'checkout_enabled':False,'launch_mode':'waitlist','policy_version':core.POLICY_VERSION}
         return {'plans': core.public_catalog(), 'unit': 'matched opportunities, not guaranteed buyers', 'policy_version': core.POLICY_VERSION, 'checkout_enabled': bool(core.os.getenv('RAZORPAY_KEY_ID') and core.os.getenv('RAZORPAY_KEY_SECRET') and (core.os.getenv('YOUTUBE_USE_CASE_APPROVED') == 'true') and (core.os.getenv('PRICING_UNIT_ECONOMICS_VERIFIED') == 'true'))}
 
     @app.post('/api/billing/checkout')
